@@ -4,6 +4,7 @@ version = "0.0.0"
 description = ""
 readme = "README.md"
 requires-python = ">=3.13"
+license = "MIT"
 dependencies = [
     "aenum>=3.1.16",
     "dataclass-wizard>=0.35.0",
@@ -12,4 +13,17 @@ dependencies = [
     "requests>=2.32.4",
     "typer>=0.16.0",
     "tzdata>=2025.2",
+]
+
+[dependency-groups]
+dev = [
+    "licensecheck>=2025.1.0",
+    "mypy>=1.16.0",
+    "pip>=25.1.1",
+    "pip-licenses>=5.0.0",
+    "pre-commit>=4.2.0",
+    "ruff>=0.11.13",
+]
+test = [
+    "pytest>=8.4.0",
 ]

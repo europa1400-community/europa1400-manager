@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+      - id: generate-notice
+        name: Generate NOTICE.md
+        entry: uv run python scripts/generate_notice.py
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+        files: ^(?:uv\.lock|pyproject\.toml)$
