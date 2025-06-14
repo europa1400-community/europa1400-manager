@@ -48,15 +48,15 @@ class GameMetadata:
         match self.edition:
             case GameEdition.STANDARD:
                 return (
-                    Path(GILDE_TL_EXE_PATH)
+                    Path(GILDE_EXE_PATH)
                     if self.language == GameLanguage.GERMAN
-                    else Path(EUROPA1400_TL_EXE_PATH)
+                    else Path(EUROPA1400_EXE_PATH)
                 )
             case GameEdition.GOLD:
                 return (
-                    Path(GILDE_GOLD_TL_EXE_PATH)
+                    Path(GILDE_GOLD_EXE_PATH)
                     if self.language == GameLanguage.GERMAN
-                    else Path(EUROPA1400_GOLD_TL_EXE_PATH)
+                    else Path(EUROPA1400_GOLD_EXE_PATH)
                 )
             case _:
                 raise ValueError(f"Unsupported edition: {self.edition}")
@@ -69,15 +69,15 @@ class GameMetadata:
         match self.edition:
             case GameEdition.STANDARD:
                 return (
-                    Path(GILDE_EXE_PATH)
+                    Path(GILDE_TL_EXE_PATH)
                     if self.language == GameLanguage.GERMAN
-                    else Path(EUROPA1400_EXE_PATH)
+                    else Path(EUROPA1400_TL_EXE_PATH)
                 )
             case GameEdition.GOLD:
                 return (
-                    Path(GILDE_GOLD_EXE_PATH)
+                    Path(GILDE_GOLD_TL_EXE_PATH)
                     if self.language == GameLanguage.GERMAN
-                    else Path(EUROPA1400_GOLD_EXE_PATH)
+                    else Path(EUROPA1400_GOLD_TL_EXE_PATH)
                 )
             case _:
                 raise ValueError(f"Unsupported edition: {self.edition}")
