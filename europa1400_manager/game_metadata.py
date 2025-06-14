@@ -88,7 +88,7 @@ class GameMetadata:
         ignore_from_none: bool = True,
         ignore_to_none: bool = True,
     ) -> list[tuple[Any, Any]]:
-        """Check if there are any changes compared to another GameInformation instance."""
+        """Check if there are any changes compared to another :class:`GameMetadata` instance."""
         changes: list[tuple[str, tuple[Any, Any]]] = []
 
         for attr in self.__dataclass_fields__:
@@ -107,7 +107,7 @@ class GameMetadata:
         return changes
 
     def merge(self, other: Self, decisions: list[tuple[str, Any]]) -> None:
-        """Merge another GameInformation instance into this one based on decisions."""
+        """Merge another :class:`GameMetadata` instance into this one based on decisions."""
         for attr in other.__dataclass_fields__:
             self_value = getattr(self, attr)
             other_value = getattr(other, attr)
