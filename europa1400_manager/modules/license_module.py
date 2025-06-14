@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from europa1400_manager.const import AppMode
@@ -20,26 +21,34 @@ class LicenseModule(BaseModule):
 
     def _show_license(self) -> None:
         """Display the license information for the game."""
-        license_file_path = Path("LICENSE.md")
-        if license_file_path.exists():
-            with license_file_path.open(encoding="utf-8") as file:
-                license_content = file.read()
-            print(license_content)
+        if getattr(sys, "frozen", False):
+            meipass = getattr(sys, "_MEIPASS", None)
+            base_path = Path(meipass) if meipass else Path(".")
         else:
-            print("License file not found.")
+            base_path = Path(__file__).parent.parent
+
+        license_file_path = base_path / "LICENSE.md"
+        if license_file_path.exists():
+            print(license_file_path.read_text(encoding="utf-8"))
+        else:
+            print(f"License file not found at {license_file_path!r}.")
 
     def _show_all_licenses(self) -> None:
-        # Display the license information for all components.
-        # use license.md contents and then notice.md contents, all in a single dialog tell
-        license_file_path = Path("LICENSE.md")
-        notice_file_path = Path("NOTICE.md")
-        if license_file_path.exists() and notice_file_path.exists():
-            with license_file_path.open(encoding="utf-8") as license_file:
-                license_content = license_file.read()
-            with notice_file_path.open(encoding="utf-8") as notice_file:
-                notice_content = notice_file.read()
+        """Display both LICENSE.md and NOTICE.md, whether frozen or not."""
+        if getattr(sys, "frozen", False):
+            meipass = getattr(sys, "_MEIPASS", None)
+            base_path = Path(meipass) if meipass else Path(".")
+        else:
+            base_path = Path(__file__).parent.parent
+
+        license_path = base_path / "LICENSE.md"
+        notice_path = base_path / "NOTICE.md"
+
+        if license_path.exists() and notice_path.exists():
+            license_content = license_path.read_text(encoding="utf-8")
+            notice_content = notice_path.read_text(encoding="utf-8")
             print(license_content)
             print("\n" + "=" * 40 + "\n")
             print(notice_content)
         else:
-            print("License or notice file not found.")
+            print(f"Couldn't find LICENSE.md or NOTICE.md in {base_path!r}")
