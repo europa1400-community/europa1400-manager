@@ -11,6 +11,7 @@ class BaseTool(ABC):
     def __init__(self, config: Config) -> None:
         self.config = config
 
+    @property
     @abstractmethod
     def is_installed(self) -> bool:
         """Check if the tool is installed."""
