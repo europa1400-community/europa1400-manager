@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "info show",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "europa1400_manager",
+            "justMyCode": true,
+            "args": [
+                "info",
+                "show"
+            ]
+        },
+        {
+            "name": "Python: Debug Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "purpose": [
+                "debug-test"
+            ],
+            "console": "internalConsole",
+            "justMyCode": true,
+            "presentation": {
+                "hidden": true
+            },
+            "env": {
+                "PYTEST_ADDOPTS": "--no-cov"
+            }
+        }
+    ]
+}
