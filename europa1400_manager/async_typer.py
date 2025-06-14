@@ -10,7 +10,7 @@ from typer import Typer
 
 class AsyncTyper(Typer):
     @staticmethod
-    def maybe_run_async(decorator: Callable, func: Callable) -> Any:
+    def maybe_run_async(decorator: Callable, func: Callable) -> Any:  # type: ignore
         if inspect.iscoroutinefunction(func):
 
             @wraps(func)

@@ -11,7 +11,7 @@ import subprocess
 import sys
 
 
-def main():
+def main() -> int:
     here = os.path.dirname(os.path.abspath(__file__))
 
     if platform.system() == "Windows":

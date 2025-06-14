@@ -25,7 +25,7 @@ class LicenseModule(BaseModule):
             meipass = getattr(sys, "_MEIPASS", None)
             base_path = Path(meipass) if meipass else Path(".")
         else:
-            base_path = Path(__file__).parent.parent
+            base_path = Path()
 
         license_file_path = base_path / "LICENSE.md"
         if license_file_path.exists():
@@ -39,7 +39,7 @@ class LicenseModule(BaseModule):
             meipass = getattr(sys, "_MEIPASS", None)
             base_path = Path(meipass) if meipass else Path(".")
         else:
-            base_path = Path(__file__).parent.parent
+            base_path = Path()
 
         license_path = base_path / "LICENSE.md"
         notice_path = base_path / "NOTICE.md"

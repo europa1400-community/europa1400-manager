@@ -8,7 +8,7 @@ from europa1400_manager.const import ToolType
 
 
 @dataclass
-class Config(YAMLWizard, JSONWizard):
+class Config(YAMLWizard, JSONWizard):  # type: ignore
     game_path: Path
     tools: list[ToolType] = field(default_factory=list)
 

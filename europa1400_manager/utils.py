@@ -22,7 +22,7 @@ class DialogUtils:
         if app_mode == AppMode.GUI:
             raise NotImplementedError("GUI dialog not implemented yet.")
         else:
-            return typer.prompt(text=prompt, default=default)
+            return str(typer.prompt(text=prompt, default=default))
 
     @staticmethod
     def ask_yes_no(app_mode: AppMode, prompt: str, default: bool = True) -> bool:

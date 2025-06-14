@@ -19,7 +19,7 @@ class BaseModule(ABC):
 
         self._register_commands()
 
-    def _register_commands(self):
+    def _register_commands(self) -> None:
         for attr_name, method in inspect.getmembers(self, predicate=inspect.ismethod):
             if attr_name in BaseModule.__dict__:
                 continue
