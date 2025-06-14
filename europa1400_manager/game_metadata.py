@@ -48,27 +48,6 @@ class GameMetadata:
         match self.edition:
             case GameEdition.STANDARD:
                 return (
-                    Path(GILDE_TL_EXE_PATH)
-                    if self.language == GameLanguage.GERMAN
-                    else Path(EUROPA1400_TL_EXE_PATH)
-                )
-            case GameEdition.GOLD:
-                return (
-                    Path(GILDE_GOLD_TL_EXE_PATH)
-                    if self.language == GameLanguage.GERMAN
-                    else Path(EUROPA1400_GOLD_TL_EXE_PATH)
-                )
-            case _:
-                raise ValueError(f"Unsupported edition: {self.edition}")
-
-    @property
-    def tl_executable_path(self) -> Path:
-        if self.edition is None:
-            raise ValueError("Edition must be set to determine the executable path.")
-
-        match self.edition:
-            case GameEdition.STANDARD:
-                return (
                     Path(GILDE_EXE_PATH)
                     if self.language == GameLanguage.GERMAN
                     else Path(EUROPA1400_EXE_PATH)
@@ -82,13 +61,34 @@ class GameMetadata:
             case _:
                 raise ValueError(f"Unsupported edition: {self.edition}")
 
+    @property
+    def tl_executable_path(self) -> Path:
+        if self.edition is None:
+            raise ValueError("Edition must be set to determine the executable path.")
+
+        match self.edition:
+            case GameEdition.STANDARD:
+                return (
+                    Path(GILDE_TL_EXE_PATH)
+                    if self.language == GameLanguage.GERMAN
+                    else Path(EUROPA1400_TL_EXE_PATH)
+                )
+            case GameEdition.GOLD:
+                return (
+                    Path(GILDE_GOLD_TL_EXE_PATH)
+                    if self.language == GameLanguage.GERMAN
+                    else Path(EUROPA1400_GOLD_TL_EXE_PATH)
+                )
+            case _:
+                raise ValueError(f"Unsupported edition: {self.edition}")
+
     def calc_changes(
         self,
         other: Self,
         ignore_from_none: bool = True,
         ignore_to_none: bool = True,
     ) -> list[tuple[Any, Any]]:
-        """Check if there are any changes compared to another GameInformation instance."""
+        """Check if there are any changes compared to another :class:`GameMetadata` instance."""
         changes: list[tuple[str, tuple[Any, Any]]] = []
 
         for attr in self.__dataclass_fields__:
@@ -107,7 +107,7 @@ class GameMetadata:
         return changes
 
     def merge(self, other: Self, decisions: list[tuple[str, Any]]) -> None:
-        """Merge another GameInformation instance into this one based on decisions."""
+        """Merge another :class:`GameMetadata` instance into this one based on decisions."""
         for attr in other.__dataclass_fields__:
             self_value = getattr(self, attr)
             other_value = getattr(other, attr)
