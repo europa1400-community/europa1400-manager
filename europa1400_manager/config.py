@@ -1,16 +1,13 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Self
 
 from dataclass_wizard import JSONWizard, YAMLWizard
 
-from europa1400_manager.const import ToolType
-
 
 @dataclass
 class Config(YAMLWizard, JSONWizard):  # type: ignore
     game_path: Path
-    tools: list[ToolType] = field(default_factory=list)
 
     def to_file(self, config_file_path: Path) -> None:
         """Write the configuration to a file."""
