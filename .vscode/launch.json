@@ -23,6 +23,30 @@
             ]
         },
         {
+            "name": "patch install ddrawcompat",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "europa1400_manager",
+            "justMyCode": true,
+            "args": [
+                "patch",
+                "install",
+                "ddrawcompat"
+            ]
+        },
+        {
+            "name": "patch uninstall ddrawcompat",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "europa1400_manager",
+            "justMyCode": true,
+            "args": [
+                "patch",
+                "uninstall",
+                "ddrawcompat"
+            ]
+        },
+        {
             "name": "Python: Debug Tests",
             "type": "debugpy",
             "request": "launch",

@@ -38,6 +38,18 @@ class PatchModule(BaseModule):
 
         return await self._install_patch(patch_name)
 
+    async def uninstall(
+        self, patch_name: PatchType | None = typer.Argument(default=None)
+    ) -> None:
+        """Uninstall the patches."""
+        if patch_name is None:
+            DialogUtils.tell(
+                self.config.app_mode, "Please specify a patch to uninstall."
+            )
+            return
+
+        return await self._uninstall_patch(patch_name)
+
     async def _install_patch(self, patch_type: PatchType) -> None:
         """Install a specific patch."""
         patch = self.patches.get(patch_type)
@@ -60,4 +72,28 @@ class PatchModule(BaseModule):
         DialogUtils.tell(
             self.config.app_mode,
             f"{patch.FRIENDLY_NAME} has been installed successfully.",
+        )
+
+    async def _uninstall_patch(self, patch_type: PatchType) -> None:
+        """Uninstall a specific patch."""
+        patch = self.patches.get(patch_type)
+
+        if patch is None:
+            DialogUtils.tell(
+                self.config.app_mode, f"Patch {patch_type} is not supported."
+            )
+            return
+
+        if not patch.is_installed:
+            DialogUtils.tell(
+                self.config.app_mode,
+                f"{patch.FRIENDLY_NAME} is not installed.",
+            )
+            return
+
+        await patch.uninstall()
+
+        DialogUtils.tell(
+            self.config.app_mode,
+            f"{patch.FRIENDLY_NAME} has been uninstalled successfully.",
         )
