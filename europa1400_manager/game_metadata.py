@@ -136,11 +136,11 @@ EXECUTABLE_CANDIDATES = [
     ),
     (
         EUROPA1400_EXE_PATH,
-        GameMetadata(edition=GameEdition.STANDARD),
+        GameMetadata(edition=GameEdition.STANDARD, language=GameLanguage.ENGLISH),
     ),
     (
         EUROPA1400_GOLD_EXE_PATH,
-        GameMetadata(edition=GameEdition.GOLD),
+        GameMetadata(edition=GameEdition.GOLD, language=GameLanguage.ENGLISH),
     ),
 ]
 
@@ -155,11 +155,11 @@ TL_EXECUTABLE_CANDIDATES = [
     ),
     (
         EUROPA1400_TL_EXE_PATH,
-        GameMetadata(edition=GameEdition.STANDARD),
+        GameMetadata(edition=GameEdition.STANDARD, language=GameLanguage.ENGLISH),
     ),
     (
         EUROPA1400_GOLD_TL_EXE_PATH,
-        GameMetadata(edition=GameEdition.GOLD),
+        GameMetadata(edition=GameEdition.GOLD, language=GameLanguage.ENGLISH),
     ),
 ]
 

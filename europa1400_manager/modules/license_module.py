@@ -1,9 +1,7 @@
 import sys
-import tkinter as tk
 from pathlib import Path
-from tkinter import ttk
 
-from europa1400_manager.const import AppMode
+from europa1400_manager.config import Config
 from europa1400_manager.modules.base_module import BaseModule
 
 
@@ -11,8 +9,8 @@ class LicenseModule(BaseModule):
     NAME = "license"
     FRIENDLY_NAME = "License"
 
-    def __init__(self, app_mode: AppMode) -> None:
-        super().__init__(app_mode)
+    def __init__(self, config: Config) -> None:
+        super().__init__(config)
 
     def show(self, all: bool = False) -> None:
         """Display the license information."""
@@ -60,48 +58,3 @@ class LicenseModule(BaseModule):
             raise FileNotFoundError(
                 f"Couldn't find LICENSE.md or NOTICE.md in {base_path!r}"
             )
-
-    def _initialize_gui(self, root: tk.Tk, tab: ttk.Frame) -> None:
-        top_frame = tk.Frame(tab)
-        top_frame.pack(fill=tk.X, pady=(0, 5))
-
-        show_all_var = tk.BooleanVar(value=False)
-        show_all_checkbox = tk.Checkbutton(
-            top_frame, text="Show all licenses", variable=show_all_var
-        )
-        show_all_checkbox.pack(side=tk.LEFT, anchor=tk.W)
-
-        def copy_to_clipboard():
-            root.clipboard_clear()
-            root.clipboard_append(text_widget.get("1.0", tk.END))
-
-        copy_button = tk.Button(
-            top_frame, text="Copy to Clipboard", command=copy_to_clipboard
-        )
-        copy_button.pack(side=tk.RIGHT, anchor=tk.E, padx=(5, 0))
-
-        text_frame = tk.Frame(tab)
-        text_frame.pack(expand=True, fill=tk.BOTH)
-
-        scrollbar = tk.Scrollbar(text_frame)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-        licenses = (
-            self._get_all_licenses() if show_all_var.get() else self._get_license()
-        )
-        text_widget = tk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set)
-        text_widget.pack(expand=True, fill=tk.BOTH)
-        text_widget.insert(tk.END, licenses)
-        text_widget.config(state=tk.DISABLED)
-        scrollbar.config(command=text_widget.yview)
-
-        def update_text_widget():
-            text_widget.config(state=tk.NORMAL)
-            text_widget.delete(1.0, tk.END)
-            licenses = (
-                self._get_all_licenses() if show_all_var.get() else self._get_license()
-            )
-            text_widget.insert(tk.END, licenses)
-            text_widget.config(state=tk.DISABLED)
-
-        show_all_checkbox.config(command=update_text_widget)

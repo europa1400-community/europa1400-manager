@@ -3,32 +3,19 @@ import sys
 import typer
 
 from europa1400_manager.cli import Cli
+from europa1400_manager.config import Config
 from europa1400_manager.const import AppMode
 from europa1400_manager.gui import Gui
-from europa1400_manager.modules.config_module import ConfigModule
-from europa1400_manager.modules.info_module import InfoModule
-from europa1400_manager.modules.license_module import LicenseModule
-from europa1400_manager.modules.tool_module import ToolModule
 
 
 def main(app_mode: AppMode = AppMode.CLI) -> None:
-    config_module = ConfigModule(app_mode)
-    info_module = InfoModule(app_mode, config_module)
-    tool_module = ToolModule(app_mode, config_module)
-    license_module = LicenseModule(app_mode)
-
-    modules = [
-        info_module,
-        tool_module,
-        config_module,
-        license_module,
-    ]
+    config = Config.load(app_mode)
 
     if app_mode is AppMode.GUI:
-        gui = Gui(modules)
+        gui = Gui(config)
         gui.run()
     else:
-        cli = Cli(modules)
+        cli = Cli(config)
         cli.run()
 
 

@@ -60,3 +60,5 @@ GILDE_TL_EXE_PATH = "Gilde_TL.exe"
 GILDE_GOLD_TL_EXE_PATH = "GildeGold_TL.exe"
 EUROPA1400_TL_EXE_PATH = "Europa1400_TL.exe"
 EUROPA1400_GOLD_TL_EXE_PATH = "Europa1400Gold_TL.exe"
+
+EVENT_UPDATE_ALL_MODULES = "update_all_modules"

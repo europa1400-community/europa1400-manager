@@ -1,10 +1,15 @@
 import os
+from pathlib import Path
 from tkinter import messagebox, simpledialog
 
 import typer
 from dotenv import load_dotenv
 
-from europa1400_manager.const import AppMode
+from europa1400_manager.const import (
+    DEFAULT_CONFIG_FILE_PATH,
+    ENV_CONFIG_FILE_PATH,
+    AppMode,
+)
 
 
 class DialogUtils:
@@ -49,3 +54,35 @@ class EnvUtils:
         load_dotenv()
 
         return os.getenv(name, default)
+
+
+class PathUtils:
+    @staticmethod
+    def get_config_file_path() -> Path:
+        """Get the default configuration file path."""
+        return Path(EnvUtils.read(ENV_CONFIG_FILE_PATH, DEFAULT_CONFIG_FILE_PATH))
+
+    @staticmethod
+    def get_game_path(app_mode: AppMode) -> Path:
+        while True:
+            game_path = Path(
+                DialogUtils.ask(
+                    app_mode,
+                    "Please enter the path to the game directory:",
+                    default=str(Path.home() / "Europa 1400"),
+                )
+            )
+
+            if PathUtils._validate_game_path(app_mode, game_path):
+                break
+
+        return game_path
+
+    @staticmethod
+    def _validate_game_path(app_mode: AppMode, game_path: Path) -> bool:
+        """Validate the game path."""
+        if not game_path.exists():
+            DialogUtils.tell(app_mode, "Invalid game path. Please try again.")
+            return False
+
+        return True
