@@ -4,20 +4,20 @@ from europa1400_manager.modules.base_module import BaseModule
 from europa1400_manager.modules.config_module import ConfigModule
 from europa1400_manager.modules.info_module import InfoModule
 from europa1400_manager.modules.license_module import LicenseModule
-from europa1400_manager.modules.tool_module import ToolModule
+from europa1400_manager.modules.patch_module import PatchModule
 
 
 class Cli:
     def __init__(self, config: Config) -> None:
         config_module = ConfigModule(config)
         info_module = InfoModule(config)
-        tool_module = ToolModule(config)
+        patch_module = PatchModule(config)
         license_module = LicenseModule(config)
 
         self.modules: list[BaseModule] = [
             config_module,
             info_module,
-            tool_module,
+            patch_module,
             license_module,
         ]
         self.typer_app = AsyncTyper(no_args_is_help=True)

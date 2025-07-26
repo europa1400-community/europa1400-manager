@@ -10,7 +10,7 @@ class AppMode(StrEnum):
     GUI = "gui"
 
 
-class ToolType(StrEnum):
+class PatchType(StrEnum):
     DDRAWCOMPAT = "ddrawcompat"
 
 

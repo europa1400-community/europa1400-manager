@@ -16,7 +16,7 @@
 - The `Cli` class sets up the Typer application.
 - The `Gui` class sets up the tkinter GUI.
 - `async_typer.py` defines a subclass that enables async commands in Typer.
-- The `tools/` directory contains tool classes describing how third‑party tools are installed.
+- The `patches/` directory contains patch classes describing how patches and third party tools are installed.
 
 ## Environment
 
@@ -33,7 +33,7 @@ Application modules might include the following:
 
 - **config** – handles configuration management.
 - **info** – provides information about the game installation.
-- **tool** – installs and configures third‑party tools such as DDrawCompat.
+- **patch** – installs and configures third‑party patches such as DDrawCompat.
 - **savegame** – manages saves and improves autosaving in the game.
 - **memory editor** – injects the memory editor DLL into the game.
 - **patch** – applies community patches.

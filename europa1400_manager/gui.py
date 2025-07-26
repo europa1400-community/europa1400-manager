@@ -9,6 +9,7 @@ from europa1400_manager.modules.base_module_gui import BaseModuleGui
 from europa1400_manager.modules.config_module_gui import ConfigModuleGui
 from europa1400_manager.modules.info_module_gui import InfoModuleGui
 from europa1400_manager.modules.license_module_gui import LicenseModuleGui
+from europa1400_manager.modules.patch_module_gui import PatchModuleGui
 
 
 class Gui:
@@ -30,7 +31,16 @@ class Gui:
         license_module = LicenseModuleGui(
             config, self.event_emitter, self.root, self.notebook
         )
-        self.modules: list[BaseModuleGui] = [info_module, config_module, license_module]
+
+        patch_module = PatchModuleGui(
+            config, self.event_emitter, self.root, self.notebook
+        )
+        self.modules: list[BaseModuleGui] = [
+            info_module,
+            config_module,
+            license_module,
+            patch_module,
+        ]
 
         self.event_emitter.on(EVENT_UPDATE_ALL_MODULES, self._update_all_modules)
 

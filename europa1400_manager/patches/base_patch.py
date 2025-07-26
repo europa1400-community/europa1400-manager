@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from europa1400_manager.config import Config
 
 
-class BaseTool(ABC):
+class BasePatch(ABC):
     NAME: str
     FRIENDLY_NAME: str
     config: Config
@@ -14,8 +14,12 @@ class BaseTool(ABC):
     @property
     @abstractmethod
     def is_installed(self) -> bool:
-        """Check if the tool is installed."""
+        """Check if the patch is installed."""
 
     @abstractmethod
     async def install(self) -> None:
-        """Install the tool."""
+        """Install the patch."""
+
+    @abstractmethod
+    async def uninstall(self) -> None:
+        """Uninstall the patch."""

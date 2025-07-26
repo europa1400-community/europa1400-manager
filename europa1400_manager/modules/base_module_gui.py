@@ -30,7 +30,6 @@ class BaseModuleGui(BaseModule, ABC):
 
     def update_gui(self) -> None:
         """Update the GUI elements for this module."""
-
         self._update_gui()
 
         loop = asyncio.get_event_loop()
