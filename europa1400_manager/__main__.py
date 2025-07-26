@@ -18,9 +18,9 @@ def main(app_mode: AppMode = AppMode.CLI) -> None:
     license_module = LicenseModule(app_mode)
 
     modules = [
-        config_module,
         info_module,
         tool_module,
+        config_module,
         license_module,
     ]
 

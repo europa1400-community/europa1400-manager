@@ -39,5 +39,3 @@ Application modules might include the following:
 - **patch** – applies community patches.
 - **network bridge** – acts as a network bridge to improve multiplayer mode.
 - **asset** – extracts, decodes and converts game assets.
-
-

@@ -1,4 +1,5 @@
 import os
+from tkinter import messagebox, simpledialog
 
 import typer
 from dotenv import load_dotenv
@@ -11,7 +12,7 @@ class DialogUtils:
     def tell(app_mode: AppMode, message: str) -> None:
         """Display a message to the user."""
         if app_mode == AppMode.GUI:
-            raise NotImplementedError("GUI dialog not implemented yet.")
+            messagebox.showinfo("Information", message)
         else:
             typer.echo(message)
 
@@ -20,7 +21,9 @@ class DialogUtils:
         """Ask a question and return the answer."""
 
         if app_mode == AppMode.GUI:
-            raise NotImplementedError("GUI dialog not implemented yet.")
+            return str(
+                simpledialog.askstring("Input", prompt, initialvalue=default) or ""
+            )
         else:
             return str(typer.prompt(text=prompt, default=default))
 
@@ -28,7 +31,13 @@ class DialogUtils:
     def ask_yes_no(app_mode: AppMode, prompt: str, default: bool = True) -> bool:
         """Ask a yes/no question and return the answer."""
         if app_mode == AppMode.GUI:
-            raise NotImplementedError("GUI dialog not implemented yet.")
+            return bool(
+                messagebox.askyesno(
+                    "Question",
+                    prompt,
+                    default=messagebox.YES if default else messagebox.NO,
+                )
+            )
         else:
             return typer.confirm(text=prompt, default=default)
 

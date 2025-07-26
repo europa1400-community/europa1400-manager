@@ -1,5 +1,7 @@
 import hashlib
+import tkinter as tk
 from pathlib import Path
+from tkinter import ttk
 from typing import Any
 
 import typer
@@ -84,3 +86,181 @@ class InfoModule(BaseModule):
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_md5.update(chunk)
         return hash_md5.hexdigest()
+
+    def _initialize_gui(self, root: tk.Tk, tab: ttk.Frame):
+        def reload_button_clicked() -> None:
+            """Reload the game metadata."""
+            # Reload game metadata by re-applying candidates
+            self.game_metadata = GameMetadata()
+            for candidate_group in CANDIDATE_GROUPS:
+                self._apply_candidate_group(candidate_group)
+
+            # Update all value labels
+            update_all_fields()
+
+        def update_all_fields():
+            """Update all field values in the GUI."""
+            # Update path fields
+            game_path_value.config(text=str(self.config_module.config.game_path))
+            executable_path_value.config(text=str(self.executable_path))
+            tl_executable_path_value.config(text=str(self.tl_executable_path))
+
+            # Update metadata fields
+            edition_value.config(
+                text=self.game_metadata.edition.value
+                if self.game_metadata.edition
+                else "Unknown"
+            )
+            version_value.config(
+                text=self.game_metadata.version.value
+                if self.game_metadata.version
+                else "Unknown"
+            )
+            distribution_value.config(
+                text=self.game_metadata.distribution.value
+                if self.game_metadata.distribution
+                else "Unknown"
+            )
+            language_value.config(
+                text=self.game_metadata.language.value
+                if self.game_metadata.language
+                else "Unknown"
+            )
+            drm_value.config(
+                text=self.game_metadata.drm.value
+                if self.game_metadata.drm
+                else "Unknown"
+            )
+
+            # Update checksum fields
+            checksums = self.checksums()
+            executable_checksum_value.config(
+                text=checksums[0][1] if checksums else "N/A"
+            )
+            tl_executable_checksum_value.config(
+                text=checksums[1][1] if len(checksums) > 1 else "N/A"
+            )
+
+        # Top row with reload button
+        top_frame = ttk.Frame(tab)
+        top_frame.pack(fill="x", pady=(0, 10))
+        reload_button = ttk.Button(
+            top_frame, text="Reload", command=reload_button_clicked
+        )
+        reload_button.pack(side="right", padx=(5, 0))
+
+        # Main content frame
+        main_frame = ttk.Frame(tab)
+        main_frame.pack(expand=True, fill="both")
+
+        # Path information section
+        path_frame = ttk.LabelFrame(main_frame, text="Paths", padding="10")
+        path_frame.pack(fill="x", pady=(0, 10))
+
+        # Game Path
+        game_path_frame = ttk.Frame(path_frame)
+        game_path_frame.pack(fill="x", pady=2)
+        ttk.Label(game_path_frame, text="Game Path:", width=20, anchor="w").pack(
+            side="left"
+        )
+        game_path_value = ttk.Label(game_path_frame, text="", anchor="w")
+        game_path_value.pack(side="left", fill="x", expand=True)
+
+        # Executable Path
+        executable_path_frame = ttk.Frame(path_frame)
+        executable_path_frame.pack(fill="x", pady=2)
+        ttk.Label(
+            executable_path_frame, text="Executable Path:", width=20, anchor="w"
+        ).pack(side="left")
+        executable_path_value = ttk.Label(executable_path_frame, text="", anchor="w")
+        executable_path_value.pack(side="left", fill="x", expand=True)
+
+        # TL Executable Path
+        tl_executable_path_frame = ttk.Frame(path_frame)
+        tl_executable_path_frame.pack(fill="x", pady=2)
+        ttk.Label(
+            tl_executable_path_frame, text="TL Executable Path:", width=20, anchor="w"
+        ).pack(side="left")
+        tl_executable_path_value = ttk.Label(
+            tl_executable_path_frame, text="", anchor="w"
+        )
+        tl_executable_path_value.pack(side="left", fill="x", expand=True)
+
+        # Game metadata section
+        metadata_frame = ttk.LabelFrame(main_frame, text="Game Metadata", padding="10")
+        metadata_frame.pack(fill="x", pady=(0, 10))
+
+        # Edition
+        edition_frame = ttk.Frame(metadata_frame)
+        edition_frame.pack(fill="x", pady=2)
+        ttk.Label(edition_frame, text="Edition:", width=20, anchor="w").pack(
+            side="left"
+        )
+        edition_value = ttk.Label(edition_frame, text="", anchor="w")
+        edition_value.pack(side="left", fill="x", expand=True)
+
+        # Version
+        version_frame = ttk.Frame(metadata_frame)
+        version_frame.pack(fill="x", pady=2)
+        ttk.Label(version_frame, text="Version:", width=20, anchor="w").pack(
+            side="left"
+        )
+        version_value = ttk.Label(version_frame, text="", anchor="w")
+        version_value.pack(side="left", fill="x", expand=True)
+
+        # Distribution
+        distribution_frame = ttk.Frame(metadata_frame)
+        distribution_frame.pack(fill="x", pady=2)
+        ttk.Label(distribution_frame, text="Distribution:", width=20, anchor="w").pack(
+            side="left"
+        )
+        distribution_value = ttk.Label(distribution_frame, text="", anchor="w")
+        distribution_value.pack(side="left", fill="x", expand=True)
+
+        # Language
+        language_frame = ttk.Frame(metadata_frame)
+        language_frame.pack(fill="x", pady=2)
+        ttk.Label(language_frame, text="Language:", width=20, anchor="w").pack(
+            side="left"
+        )
+        language_value = ttk.Label(language_frame, text="", anchor="w")
+        language_value.pack(side="left", fill="x", expand=True)
+
+        # DRM
+        drm_frame = ttk.Frame(metadata_frame)
+        drm_frame.pack(fill="x", pady=2)
+        ttk.Label(drm_frame, text="DRM:", width=20, anchor="w").pack(side="left")
+        drm_value = ttk.Label(drm_frame, text="", anchor="w")
+        drm_value.pack(side="left", fill="x", expand=True)
+
+        # Checksums section
+        checksum_frame = ttk.LabelFrame(main_frame, text="File Checksums", padding="10")
+        checksum_frame.pack(fill="x", pady=(0, 10))
+
+        # Executable Checksum
+        executable_checksum_frame = ttk.Frame(checksum_frame)
+        executable_checksum_frame.pack(fill="x", pady=2)
+        ttk.Label(
+            executable_checksum_frame, text="Executable MD5:", width=20, anchor="w"
+        ).pack(side="left")
+        executable_checksum_value = ttk.Label(
+            executable_checksum_frame, text="", anchor="w", font=("Courier", 9)
+        )
+        executable_checksum_value.pack(side="left", fill="x", expand=True)
+
+        # TL Executable Checksum
+        tl_executable_checksum_frame = ttk.Frame(checksum_frame)
+        tl_executable_checksum_frame.pack(fill="x", pady=2)
+        ttk.Label(
+            tl_executable_checksum_frame,
+            text="TL Executable MD5:",
+            width=20,
+            anchor="w",
+        ).pack(side="left")
+        tl_executable_checksum_value = ttk.Label(
+            tl_executable_checksum_frame, text="", anchor="w", font=("Courier", 9)
+        )
+        tl_executable_checksum_value.pack(side="left", fill="x", expand=True)
+
+        # Initialize all field values
+        update_all_fields()
