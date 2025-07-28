@@ -7,6 +7,7 @@ from pyee import EventEmitter
 
 from europa1400_manager.config import Config
 from europa1400_manager.const import EVENT_UPDATE_ALL_MODULES
+from europa1400_manager.database import Database
 from europa1400_manager.modules.base_module_gui import BaseModuleGui
 from europa1400_manager.modules.config_module import ConfigModule
 from europa1400_manager.utils import DialogUtils
@@ -18,11 +19,12 @@ class ConfigModuleGui(BaseModuleGui, ConfigModule):
     def __init__(
         self,
         config: Config,
+        database: Database,
         event_emitter: EventEmitter,
         root: tk.Tk,
         notebook: ttk.Notebook,
     ) -> None:
-        super().__init__(config, event_emitter, root, notebook)
+        super().__init__(config, database, event_emitter, root, notebook)
 
         top_frame = ttk.Frame(self.tab)
         top_frame.pack(fill="x", pady=(0, 10))

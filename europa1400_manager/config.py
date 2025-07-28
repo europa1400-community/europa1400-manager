@@ -6,7 +6,7 @@ from dataclass_wizard import JSONWizard, YAMLWizard, json_field
 from europa1400_manager.const import (
     AppMode,
 )
-from europa1400_manager.utils import DialogUtils, PathUtils
+from europa1400_manager.utils import DialogUtils, EnvUtils, PathUtils
 
 
 @dataclass
@@ -21,7 +21,7 @@ class Config(YAMLWizard, JSONWizard):
         "config_file_path",
         dump=False,
         init=False,
-        default=PathUtils.get_config_file_path(),
+        default=EnvUtils.get_config_file_path(),
     )
 
     def to_file(self) -> None:
@@ -36,7 +36,7 @@ class Config(YAMLWizard, JSONWizard):
         """Reset the configuration to default values."""
 
         self.config_file_path.unlink(missing_ok=True)
-        self.config_file_path = PathUtils.get_config_file_path()
+        self.config_file_path = EnvUtils.get_config_file_path()
         self.game_path = PathUtils.get_game_path(self.app_mode)
 
         self.to_file()
@@ -64,7 +64,7 @@ class Config(YAMLWizard, JSONWizard):
     @classmethod
     def load(cls, app_mode: AppMode) -> "Config":
         """Read the configuration from a file."""
-        config_file_path = PathUtils.get_config_file_path()
+        config_file_path = EnvUtils.get_config_file_path()
 
         if not config_file_path.exists():
             if DialogUtils.ask_yes_no(

@@ -6,6 +6,7 @@ from pyee import EventEmitter
 
 from europa1400_manager.config import Config
 from europa1400_manager.const import EVENT_UPDATE_ALL_MODULES
+from europa1400_manager.database import Database
 from europa1400_manager.modules.base_module_gui import BaseModuleGui
 from europa1400_manager.modules.info_module import InfoModule
 
@@ -17,11 +18,12 @@ class InfoModuleGui(BaseModuleGui, InfoModule):
     def __init__(
         self,
         config: Config,
+        database: Database,
         event_emitter: EventEmitter,
         root: tk.Tk,
         notebook: ttk.Notebook,
     ) -> None:
-        super().__init__(config, event_emitter, root, notebook)
+        super().__init__(config, database, event_emitter, root, notebook)
 
         # Top row with reload button
         top_frame = ttk.Frame(self.tab)
@@ -160,27 +162,27 @@ class InfoModuleGui(BaseModuleGui, InfoModule):
 
         # Update metadata fields
         self.edition_value.config(
-            text=self.game_metadata.edition.value
+            text=self.game_metadata.edition.name
             if self.game_metadata.edition
             else "Unknown"
         )
         self.version_value.config(
-            text=self.game_metadata.version.value
+            text=self.game_metadata.version.name
             if self.game_metadata.version
             else "Unknown"
         )
         self.distribution_value.config(
-            text=self.game_metadata.distribution.value
+            text=self.game_metadata.distribution.name
             if self.game_metadata.distribution
             else "Unknown"
         )
         self.language_value.config(
-            text=self.game_metadata.language.value
+            text=self.game_metadata.language.name
             if self.game_metadata.language
             else "Unknown"
         )
         self.drm_value.config(
-            text=self.game_metadata.drm.value if self.game_metadata.drm else "Unknown"
+            text=self.game_metadata.drm.name if self.game_metadata.drm else "Unknown"
         )
 
         # Update checksum fields

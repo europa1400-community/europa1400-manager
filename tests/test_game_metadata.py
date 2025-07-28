@@ -14,7 +14,7 @@ from europa1400_manager.const import (
     GameEdition,
     GameLanguage,
 )
-from europa1400_manager.game_metadata import GameMetadata
+from europa1400_manager.game_metadata import GameMetadataMatcher
 
 
 @pytest.mark.parametrize(
@@ -47,6 +47,6 @@ def test_executable_paths(
     exp_exe: str,
     exp_tl: str,
 ) -> None:
-    meta = GameMetadata(edition=edition, language=language)
+    meta = GameMetadataMatcher(edition=edition, language=language)
     assert meta.executable_path == Path(exp_exe)
     assert meta.tl_executable_path == Path(exp_tl)

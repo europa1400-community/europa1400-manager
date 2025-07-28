@@ -7,6 +7,8 @@ requires-python = ">=3.13"
 license = "MIT"
 dependencies = [
     "aenum>=3.1.16",
+    "aiohttp>=3.12.14",
+    "async-tkinter-loop>=0.9.3",
     "dataclass-wizard[yaml]>=0.35.0",
     "pyee>=13.0.0",
     "python-dotenv>=1.1.0",
@@ -24,6 +26,7 @@ dev = [
     "pre-commit>=4.2.0",
     "pyinstaller>=6.14.1",
     "ruff>=0.11.13",
+    "types-pyyaml>=6.0.12.20250516",
     "types-requests>=2.32.4.20250611",
 ]
 test = [

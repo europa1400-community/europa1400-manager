@@ -2,6 +2,7 @@ import typer
 
 from europa1400_manager.config import Config
 from europa1400_manager.const import PatchType
+from europa1400_manager.database import Database
 from europa1400_manager.modules.base_module import BaseModule
 from europa1400_manager.patches.base_patch import BasePatch
 from europa1400_manager.patches.ddrawcompat_patch import DDrawCompatPatch
@@ -12,8 +13,8 @@ class PatchModule(BaseModule):
     NAME = "patch"
     FRIENDLY_NAME = "Patches"
 
-    def __init__(self, config: Config) -> None:
-        super().__init__(config)
+    def __init__(self, config: Config, database: Database) -> None:
+        super().__init__(config, database)
 
         self.patches: dict[PatchType, BasePatch] = {
             PatchType.DDRAWCOMPAT: DDrawCompatPatch(self.config),

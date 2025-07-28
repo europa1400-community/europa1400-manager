@@ -1,5 +1,6 @@
 from europa1400_manager.async_typer import AsyncTyper
 from europa1400_manager.config import Config
+from europa1400_manager.database import Database
 from europa1400_manager.modules.base_module import BaseModule
 from europa1400_manager.modules.config_module import ConfigModule
 from europa1400_manager.modules.info_module import InfoModule
@@ -8,11 +9,14 @@ from europa1400_manager.modules.patch_module import PatchModule
 
 
 class Cli:
-    def __init__(self, config: Config) -> None:
-        config_module = ConfigModule(config)
-        info_module = InfoModule(config)
-        patch_module = PatchModule(config)
-        license_module = LicenseModule(config)
+    def __init__(self, config: Config, database: Database) -> None:
+        self.config = config
+        self.database = database
+
+        config_module = ConfigModule(config, database)
+        info_module = InfoModule(config, database)
+        patch_module = PatchModule(config, database)
+        license_module = LicenseModule(config, database)
 
         self.modules: list[BaseModule] = [
             config_module,
@@ -26,7 +30,7 @@ class Cli:
         for module in self.modules:
             self.typer_app.add_typer(module.typer_app, name=module.NAME)
 
-    def run(self) -> None:
+    async def run(self) -> None:
         self.typer_app()
 
     def default(self, gui: bool = False) -> None:

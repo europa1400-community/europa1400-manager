@@ -1,16 +1,12 @@
 import sys
 from pathlib import Path
 
-from europa1400_manager.config import Config
 from europa1400_manager.modules.base_module import BaseModule
 
 
 class LicenseModule(BaseModule):
     NAME = "license"
     FRIENDLY_NAME = "License"
-
-    def __init__(self, config: Config) -> None:
-        super().__init__(config)
 
     def show(self, all: bool = False) -> None:
         """Display the license information."""

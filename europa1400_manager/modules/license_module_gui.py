@@ -4,6 +4,7 @@ from tkinter import ttk
 from pyee import EventEmitter
 
 from europa1400_manager.config import Config
+from europa1400_manager.database import Database
 from europa1400_manager.modules.base_module_gui import BaseModuleGui
 from europa1400_manager.modules.license_module import LicenseModule
 
@@ -14,11 +15,12 @@ class LicenseModuleGui(BaseModuleGui, LicenseModule):
     def __init__(
         self,
         config: Config,
+        database: Database,
         event_emitter: EventEmitter,
         root: tk.Tk,
         notebook: ttk.Notebook,
     ) -> None:
-        super().__init__(config, event_emitter, root, notebook)
+        super().__init__(config, database, event_emitter, root, notebook)
 
         top_frame = tk.Frame(self.tab)
         top_frame.pack(fill=tk.X, pady=(0, 5))

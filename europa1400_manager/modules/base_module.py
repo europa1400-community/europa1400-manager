@@ -4,6 +4,7 @@ from abc import ABC
 from europa1400_manager.async_typer import AsyncTyper
 from europa1400_manager.config import Config
 from europa1400_manager.const import AppMode
+from europa1400_manager.database import Database
 
 
 class BaseModule(ABC):
@@ -12,8 +13,10 @@ class BaseModule(ABC):
     app_mode: AppMode
     typer_app: AsyncTyper
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, database: Database) -> None:
         self.config = config
+        self.database = database
+
         self.typer_app = AsyncTyper(no_args_is_help=True)
         self.typer_app.info.name = self.NAME
         self.typer_app.info.help = f"{self.FRIENDLY_NAME} module"

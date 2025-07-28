@@ -6,6 +6,7 @@ from tkinter import ttk
 from pyee import EventEmitter
 
 from europa1400_manager.config import Config
+from europa1400_manager.database import Database
 from europa1400_manager.modules.base_module import BaseModule
 
 
@@ -15,11 +16,12 @@ class BaseModuleGui(BaseModule, ABC):
     def __init__(
         self,
         config: Config,
+        database: Database,
         event_emitter: EventEmitter,
         root: tk.Tk,
         notebook: ttk.Notebook,
     ) -> None:
-        super().__init__(config)
+        super().__init__(config, database)
 
         self.event_emitter = event_emitter
         self.root = root

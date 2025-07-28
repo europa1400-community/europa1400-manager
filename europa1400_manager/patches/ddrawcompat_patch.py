@@ -4,7 +4,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-import requests
+import aiohttp
 
 from europa1400_manager.config import Config
 from europa1400_manager.patches.base_patch import BasePatch
@@ -36,14 +36,15 @@ class DDrawCompatPatch(BasePatch):
         with tempfile.TemporaryDirectory() as tmp:
             zip_path = os.path.join(tmp, "ddrawcompat.zip")
 
-            resp = requests.get(url, stream=True)
-            if resp.status_code != 200:
-                raise Exception(
-                    f"Failed to download DDrawCompat: HTTP {resp.status_code}"
-                )
-            with open(zip_path, "wb") as f:
-                for chunk in resp.iter_content(32_768):
-                    f.write(chunk)
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as resp:
+                    if resp.status != 200:
+                        raise Exception(
+                            f"Failed to download DDrawCompat: HTTP {resp.status}"
+                        )
+                    with open(zip_path, "wb") as f:
+                        async for chunk in resp.content.iter_chunked(32_768):
+                            f.write(chunk)
 
             with zipfile.ZipFile(zip_path, "r") as z:
                 z.extractall(tmp)

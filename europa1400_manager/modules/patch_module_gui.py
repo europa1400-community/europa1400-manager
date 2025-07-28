@@ -1,12 +1,14 @@
-import asyncio
+import functools
 import tkinter as tk
 from concurrent.futures import ThreadPoolExecutor
 from tkinter import ttk
 
+from async_tkinter_loop import async_handler
 from pyee import EventEmitter
 
 from europa1400_manager.config import Config
 from europa1400_manager.const import EVENT_UPDATE_ALL_MODULES, PatchType
+from europa1400_manager.database import Database
 from europa1400_manager.modules.base_module_gui import BaseModuleGui
 from europa1400_manager.modules.patch_module import PatchModule
 
@@ -17,12 +19,12 @@ class PatchModuleGui(BaseModuleGui, PatchModule):
     def __init__(
         self,
         config: Config,
+        database: Database,
         event_emitter: EventEmitter,
         root: tk.Tk,
         notebook: ttk.Notebook,
     ) -> None:
-        super().__init__(config, event_emitter, root, notebook)
-
+        super().__init__(config, database, event_emitter, root, notebook)
         main_frame = ttk.LabelFrame(self.tab, text="Patches", padding="10")
         main_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -44,30 +46,24 @@ class PatchModuleGui(BaseModuleGui, PatchModule):
 
             action_button = ttk.Button(
                 row,
-                text="",
-                command=lambda pt=patch_type: self._on_action_clicked(pt),
+                command=functools.partial(self._on_action_clicked, patch_type),
             )
             action_button.pack(side="right")
             self.action_buttons[patch_type] = action_button
 
-    def _on_action_clicked(self, patch_type: PatchType) -> None:
+    @async_handler
+    async def _on_action_clicked(self, patch_type: PatchType) -> None:
         patch = self.patches[patch_type]
+        button = self.action_buttons[patch_type]
 
-        def task():
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            if patch.is_installed:
-                loop.run_until_complete(patch.uninstall())
-            else:
-                loop.run_until_complete(patch.install())
-            loop.close()
+        button.config(state=tk.DISABLED, text="Working...")
 
-        future = self._executor.submit(task)
-        future.add_done_callback(
-            lambda _: self.root.after(
-                0, lambda: self.event_emitter.emit(EVENT_UPDATE_ALL_MODULES)
-            )
-        )
+        if patch.is_installed:
+            await patch.uninstall()
+        else:
+            await patch.install()
+
+        self.event_emitter.emit(EVENT_UPDATE_ALL_MODULES)
 
     def _update_gui(self) -> None:
         for patch_type, patch in self.patches.items():
@@ -76,4 +72,4 @@ class PatchModuleGui(BaseModuleGui, PatchModule):
             button = self.action_buttons[patch_type]
 
             var.set(installed)
-            button.config(text="Uninstall" if installed else "Install")
+            button.config(text="Uninstall" if installed else "Install", state=tk.NORMAL)
