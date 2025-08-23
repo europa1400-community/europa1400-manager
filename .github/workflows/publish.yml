@@ -9,16 +9,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest]
         include:
           - os: windows-latest
             asset_name: europa1400-manager-windows.exe
             executable_name: europa1400-manager.exe
           - os: ubuntu-latest
             asset_name: europa1400-manager-linux
-            executable_name: europa1400-manager
-          - os: macos-latest
-            asset_name: europa1400-manager-macos
             executable_name: europa1400-manager
 
     steps:
