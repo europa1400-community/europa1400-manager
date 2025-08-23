@@ -33,7 +33,7 @@ class LicenseModuleGui(BaseModuleGui, LicenseModule):
         )
         show_all_checkbox.pack(side=tk.LEFT, anchor=tk.W)
 
-        def copy_to_clipboard():
+        def copy_to_clipboard() -> None:
             root.clipboard_clear()
             root.clipboard_append(self.text_widget.get("1.0", tk.END))
 

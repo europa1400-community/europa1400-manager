@@ -32,7 +32,7 @@ class Database:
             return
 
         # List of all table types to fetch
-        table_types = [
+        table_types: list[Type[DatabaseTable]] = [
             GameLanguageTable,
             GameEditionTable,
             GameVersionTable,
@@ -45,7 +45,7 @@ class Database:
         # Fetch all tables
         for table_type in table_types:
             try:
-                table = await DatabaseUtils.fetch_table(table_type)
+                table: DatabaseTable = await DatabaseUtils.fetch_table(table_type)
                 self._tables[table_type] = table
             except Exception as e:
                 print(f"Warning: Failed to fetch {table_type.__name__}: {e}")

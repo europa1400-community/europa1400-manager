@@ -1,17 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar, TypeVar
+from typing import Any, ClassVar
 
 from dataclass_wizard import YAMLWizard
 
-TTable = TypeVar("TTable", bound="DatabaseTable")
 
-
-def table(filename: str):
-    def wrapper(cls: type[TTable]) -> type[TTable]:
+def table(filename: str) -> Any:
+    def wrapper(cls: type[Any]) -> type[Any]:
         cls.FILE_NAME = filename
-        return dataclass(cls)
+        return cls
 
     return wrapper
 
@@ -64,47 +62,77 @@ class GameExecutableToMetadata(DatabaseElement):
 
 
 @dataclass
+class GamePatch(NamedDatabaseElement):
+    pass
+
+
+@dataclass
+class GameMetadataToPatch(DatabaseElement):
+    metadata: GameMetadataId
+    patch: str
+
+
+@dataclass
 class DatabaseTable(YAMLWizard):
     FILE_NAME: ClassVar[str]
 
     id: str
     name: str
-    elements: list[DatabaseElement]
+    elements: list[Any]
 
 
+@dataclass
 @table("language.yml")
 class GameLanguageTable(DatabaseTable):
     elements: list[GameLanguage]
 
 
+@dataclass
 @table("edition.yml")
 class GameEditionTable(DatabaseTable):
     elements: list[GameEdition]
 
 
+@dataclass
 @table("version.yml")
 class GameVersionTable(DatabaseTable):
     elements: list[GameVersion]
 
 
+@dataclass
 @table("distribution.yml")
 class GameDistributionTable(DatabaseTable):
     elements: list[GameDistribution]
 
 
+@dataclass
 @table("drm.yml")
 class GameDrmTable(DatabaseTable):
     elements: list[GameDrm]
 
 
+@dataclass
 @table("executable.yml")
 class GameExecutableTable(DatabaseTable):
     elements: list[GameExecutable]
 
 
+@dataclass
 @table("executable_to_metadata.yml")
 class GameExecutableToMetadataTable(DatabaseTable):
     elements: list[GameExecutableToMetadata]
+
+
+@dataclass
+@table("patch.yml")
+class GamePatchTable(DatabaseTable):
+    elements: list[GamePatch]
+
+
+@dataclass
+@table("metadata_to_patch.yml")
+class GameMetadataToPatchTable(DatabaseTable):
+    elements: list[GameMetadataToPatch]
 
 
 @dataclass

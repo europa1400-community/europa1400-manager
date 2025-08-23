@@ -11,7 +11,7 @@ from typer import Typer
 
 class AsyncTyper(Typer):
     @staticmethod
-    def maybe_run_async(decorator: Callable, func: Callable) -> Any:
+    def maybe_run_async(decorator: Callable[..., Any], func: Callable[..., Any]) -> Any:
         if inspect.iscoroutinefunction(func):
 
             @wraps(func)
@@ -19,7 +19,7 @@ class AsyncTyper(Typer):
                 try:
                     asyncio.get_running_loop()
 
-                    def run_in_thread():
+                    def run_in_thread() -> Any:
                         return asyncio.run(func(*args, **kwargs))
 
                     with concurrent.futures.ThreadPoolExecutor() as executor:

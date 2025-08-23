@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from tkinter import messagebox, simpledialog
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 import aiohttp
 import typer
@@ -150,7 +150,8 @@ class DatabaseUtils:
             async with session.get(str(url)) as response:
                 response.raise_for_status()
                 text = await response.text()
-                return yaml.safe_load(text)
+
+        return cast(dict[str, Any], yaml.safe_load(text))
 
     @staticmethod
     async def read_database_file(file_path: Path) -> dict[str, Any]:

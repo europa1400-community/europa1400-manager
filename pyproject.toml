@@ -29,7 +29,26 @@ dev = [
     "types-pyyaml>=6.0.12.20250516",
     "types-requests>=2.32.4.20250611",
 ]
-test = [
-    "pytest>=8.4.0",
-    "pytest-cov>=6.2.1",
-]
+test = ["pytest>=8.4.0", "pytest-cov>=6.2.1"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = "async_tkinter_loop"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "dataclass_wizard"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["europa1400_manager.models", "europa1400_manager.config"]
+disable_error_code = ["no-untyped-call"]
+
+[[tool.mypy.overrides]]
+module = ["europa1400_manager.modules.patch_module_gui"]
+disable_error_code = ["misc"]
