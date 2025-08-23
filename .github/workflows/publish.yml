@@ -12,11 +12,15 @@ jobs:
         os: [windows-latest, ubuntu-latest]
         include:
           - os: windows-latest
-            asset_name: europa1400-manager-windows.exe
-            executable_name: europa1400-manager.exe
+            cli_asset_name: europa1400-manager-windows.exe
+            gui_asset_name: europa1400-manager-gui-windows.exe
+            cli_executable_name: europa1400-manager.exe
+            gui_executable_name: europa1400-manager-gui.exe
           - os: ubuntu-latest
-            asset_name: europa1400-manager-linux
-            executable_name: europa1400-manager
+            cli_asset_name: europa1400-manager-linux
+            gui_asset_name: europa1400-manager-gui-linux
+            cli_executable_name: europa1400-manager
+            gui_executable_name: europa1400-manager-gui
 
     steps:
       - name: Checkout
@@ -36,22 +40,34 @@ jobs:
         run: |
           uv run pyinstaller pyinstaller.spec
 
-      - name: Rename executable (Windows)
+      - name: Rename executables (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          Move-Item -Path "dist\europa1400-manager.exe" -Destination "dist\${{ matrix.asset_name }}"
+          Move-Item -Path "dist\${{ matrix.cli_executable_name }}" -Destination "dist\${{ matrix.cli_asset_name }}"
+          Move-Item -Path "dist\${{ matrix.gui_executable_name }}" -Destination "dist\${{ matrix.gui_asset_name }}"
 
-      - name: Rename executable (Unix)
+      - name: Rename executables (Unix)
         if: matrix.os != 'windows-latest'
         run: |
-          mv dist/europa1400-manager dist/${{ matrix.asset_name }}
+          mv dist/${{ matrix.cli_executable_name }} dist/${{ matrix.cli_asset_name }}
+          mv dist/${{ matrix.gui_executable_name }} dist/${{ matrix.gui_asset_name }}
 
-      - name: Upload Release Asset
+      - name: Upload CLI Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist/${{ matrix.asset_name }}
-          asset_name: ${{ matrix.asset_name }}
+          asset_path: ./dist/${{ matrix.cli_asset_name }}
+          asset_name: ${{ matrix.cli_asset_name }}
+          asset_content_type: application/octet-stream
+
+      - name: Upload GUI Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/${{ matrix.gui_asset_name }}
+          asset_name: ${{ matrix.gui_asset_name }}
           asset_content_type: application/octet-stream
