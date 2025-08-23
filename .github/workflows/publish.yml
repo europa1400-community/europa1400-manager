@@ -1,0 +1,60 @@
+name: Publish
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+            asset_name: europa1400-manager-windows.exe
+            executable_name: europa1400-manager.exe
+          - os: ubuntu-latest
+            asset_name: europa1400-manager-linux
+            executable_name: europa1400-manager
+          - os: macos-latest
+            asset_name: europa1400-manager-macos
+            executable_name: europa1400-manager
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: 3.13
+          enable-cache: true
+          cache-suffix: uv-${{ runner.os }}-3.13
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Build with PyInstaller
+        run: |
+          uv run pyinstaller pyinstaller.spec
+
+      - name: Rename executable (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          Move-Item -Path "dist\europa1400-manager.exe" -Destination "dist\${{ matrix.asset_name }}"
+
+      - name: Rename executable (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          mv dist/europa1400-manager dist/${{ matrix.asset_name }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/${{ matrix.asset_name }}
+          asset_name: ${{ matrix.asset_name }}
+          asset_content_type: application/octet-stream
