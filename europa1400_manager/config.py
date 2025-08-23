@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
+import yaml
 from dataclass_wizard import JSONWizard, YAMLWizard, json_field
 
 from europa1400_manager.const import (
@@ -14,7 +16,6 @@ class Config(YAMLWizard, JSONWizard):
     game_path: Path
     app_mode: AppMode = json_field(
         "app_mode",
-        init=False,
         dump=False,
     )
     config_file_path: Path = json_field(
@@ -76,7 +77,9 @@ class Config(YAMLWizard, JSONWizard):
                 exit(1)
 
         with config_file_path.open("r") as config_file:
-            config = cls.from_yaml(config_file.read())
+            config_dict: dict[str, Any] = yaml.safe_load(config_file)
+            config_dict["app_mode"] = app_mode
+            config = cls.from_dict(config_dict)
             if not isinstance(config, cls):
                 raise TypeError(
                     f"Expected instance of {cls.__name__}, got {type(config).__name__}"
