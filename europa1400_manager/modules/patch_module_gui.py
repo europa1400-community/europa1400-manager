@@ -7,10 +7,11 @@ from async_tkinter_loop import async_handler
 from pyee import EventEmitter
 
 from europa1400_manager.config import Config
-from europa1400_manager.const import EVENT_UPDATE_ALL_MODULES, PatchType
+from europa1400_manager.const import EVENT_UPDATE_ALL_MODULES
 from europa1400_manager.database import Database
 from europa1400_manager.modules.base_module_gui import BaseModuleGui
 from europa1400_manager.modules.patch_module import PatchModule
+from europa1400_manager.patches.base_patch import BasePatch
 
 
 class PatchModuleGui(BaseModuleGui, PatchModule):
@@ -28,33 +29,32 @@ class PatchModuleGui(BaseModuleGui, PatchModule):
         main_frame = ttk.LabelFrame(self.tab, text="Patches", padding="10")
         main_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
-        self.status_vars: dict[PatchType, tk.BooleanVar] = {}
-        self.action_buttons: dict[PatchType, ttk.Button] = {}
+        self.status_vars: dict[BasePatch, tk.BooleanVar] = {}
+        self.action_buttons: dict[BasePatch, ttk.Button] = {}
 
         self._executor = ThreadPoolExecutor(max_workers=1)
-        for patch_type, patch in self.patches.items():
+        for patch in self.patches:
             row = ttk.Frame(main_frame)
             row.pack(fill="x", pady=2, padx=5)
 
             var = tk.BooleanVar(value=patch.is_installed)
             check = ttk.Checkbutton(row, variable=var, state="disabled")
             check.pack(side="left", padx=(0, 5))
-            self.status_vars[patch_type] = var
+            self.status_vars[patch] = var
 
             name_label = ttk.Label(row, text=patch.friendly_name, width=20, anchor="w")
             name_label.pack(side="left")
 
             action_button = ttk.Button(
                 row,
-                command=functools.partial(self._on_action_clicked, patch_type),
+                command=functools.partial(self._on_action_clicked, patch),
             )
             action_button.pack(side="right")
-            self.action_buttons[patch_type] = action_button
+            self.action_buttons[patch] = action_button
 
     @async_handler
-    async def _on_action_clicked(self, patch_type: PatchType) -> None:
-        patch = self.patches[patch_type]
-        button = self.action_buttons[patch_type]
+    async def _on_action_clicked(self, patch: BasePatch) -> None:
+        button = self.action_buttons[patch]
 
         button.config(state=tk.DISABLED, text="Working...")
 
@@ -66,10 +66,10 @@ class PatchModuleGui(BaseModuleGui, PatchModule):
         self.event_emitter.emit(EVENT_UPDATE_ALL_MODULES)
 
     def _update_gui(self) -> None:
-        for patch_type, patch in self.patches.items():
+        for patch in self.patches:
             installed = patch.is_installed
-            var = self.status_vars[patch_type]
-            button = self.action_buttons[patch_type]
+            var = self.status_vars[patch]
+            button = self.action_buttons[patch]
 
             var.set(installed)
             button.config(text="Uninstall" if installed else "Install", state=tk.NORMAL)
