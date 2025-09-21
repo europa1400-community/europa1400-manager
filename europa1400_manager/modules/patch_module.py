@@ -3,21 +3,33 @@ import typer
 from europa1400_manager.config import Config
 from europa1400_manager.const import PatchType
 from europa1400_manager.database import Database
+from europa1400_manager.models import GamePatch, GamePatchTable
 from europa1400_manager.modules.base_module import BaseModule
+from europa1400_manager.patches.archive_patch import ArchivePatch
 from europa1400_manager.patches.base_patch import BasePatch
-from europa1400_manager.patches.ddrawcompat_patch import DDrawCompatPatch
+from europa1400_manager.patches.simple_patch import SimplePatch
 from europa1400_manager.utils import DialogUtils
 
 
 class PatchModule(BaseModule):
     NAME = "patch"
     FRIENDLY_NAME = "Patches"
+    PATCH_TYPE_TO_CLASS: dict[PatchType, type[BasePatch]] = {
+        PatchType.SIMPLE: SimplePatch,
+        PatchType.ARCHIVE: ArchivePatch,
+    }
 
     def __init__(self, config: Config, database: Database) -> None:
         super().__init__(config, database)
 
-        self.patches: dict[PatchType, BasePatch] = {
-            PatchType.DDRAWCOMPAT: DDrawCompatPatch(self.config),
+        self.game_patches = database.get_table_elements(GamePatchTable, GamePatch)
+
+        self.patches = {
+            game_patch.type: self.PATCH_TYPE_TO_CLASS[game_patch.type](
+                config, game_patch
+            )
+            for game_patch in self.game_patches
+            if game_patch.type in self.PATCH_TYPE_TO_CLASS
         }
 
     @property
@@ -64,7 +76,7 @@ class PatchModule(BaseModule):
         if patch.is_installed:
             DialogUtils.tell(
                 self.config.app_mode,
-                f"{patch.FRIENDLY_NAME} is already installed.",
+                f"{patch.friendly_name} is already installed.",
             )
             return
 
@@ -72,7 +84,7 @@ class PatchModule(BaseModule):
 
         DialogUtils.tell(
             self.config.app_mode,
-            f"{patch.FRIENDLY_NAME} has been installed successfully.",
+            f"{patch.friendly_name} has been installed successfully.",
         )
 
     async def _uninstall_patch(self, patch_type: PatchType) -> None:
@@ -88,7 +100,7 @@ class PatchModule(BaseModule):
         if not patch.is_installed:
             DialogUtils.tell(
                 self.config.app_mode,
-                f"{patch.FRIENDLY_NAME} is not installed.",
+                f"{patch.friendly_name} is not installed.",
             )
             return
 
@@ -96,5 +108,5 @@ class PatchModule(BaseModule):
 
         DialogUtils.tell(
             self.config.app_mode,
-            f"{patch.FRIENDLY_NAME} has been uninstalled successfully.",
+            f"{patch.friendly_name} has been uninstalled successfully.",
         )

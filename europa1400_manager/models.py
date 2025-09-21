@@ -5,6 +5,8 @@ from typing import Any, ClassVar
 
 from dataclass_wizard import YAMLWizard
 
+from europa1400_manager.const import PatchType
+
 
 def table(filename: str) -> Any:
     def wrapper(cls: type[Any]) -> type[Any]:
@@ -63,7 +65,10 @@ class GameExecutableToMetadata(DatabaseElement):
 
 @dataclass
 class GamePatch(NamedDatabaseElement):
-    pass
+    url: str
+    relative_destination: str = ""
+    type: PatchType = PatchType.SIMPLE
+    file_name: str | None = None
 
 
 @dataclass

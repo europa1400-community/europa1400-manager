@@ -41,7 +41,7 @@ class PatchModuleGui(BaseModuleGui, PatchModule):
             check.pack(side="left", padx=(0, 5))
             self.status_vars[patch_type] = var
 
-            name_label = ttk.Label(row, text=patch.FRIENDLY_NAME, width=20, anchor="w")
+            name_label = ttk.Label(row, text=patch.friendly_name, width=20, anchor="w")
             name_label.pack(side="left")
 
             action_button = ttk.Button(

@@ -11,6 +11,7 @@ from europa1400_manager.models import (
     GameExecutableTable,
     GameExecutableToMetadataTable,
     GameLanguageTable,
+    GamePatchTable,
     GameVersionTable,
 )
 from europa1400_manager.utils import DatabaseUtils
@@ -40,6 +41,7 @@ class Database:
             GameDrmTable,
             GameExecutableTable,
             GameExecutableToMetadataTable,
+            GamePatchTable,
         ]
 
         # Fetch all tables

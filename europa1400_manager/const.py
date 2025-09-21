@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 
 ENV_CONFIG_FILE_PATH = "CONFIG_FILE_PATH"
 ENV_DATABASE_REPOSITORY_URL = "DATABASE_REPOSITORY_URL"
@@ -18,7 +18,8 @@ class AppMode(StrEnum):
 
 
 class PatchType(StrEnum):
-    DDRAWCOMPAT = "ddrawcompat"
+    SIMPLE = auto()
+    ARCHIVE = auto()
 
 
 EVENT_UPDATE_ALL_MODULES = "update_all_modules"
