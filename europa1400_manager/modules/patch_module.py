@@ -24,22 +24,11 @@ class PatchModule(BaseModule):
 
         self.game_patches = database.get_table_elements(GamePatchTable, GamePatch)
 
-        self.patches = {
-            game_patch.type: self.PATCH_TYPE_TO_CLASS[game_patch.type](
-                config, game_patch
-            )
+        self.patches = [
+            self.PATCH_TYPE_TO_CLASS[game_patch.type](config, game_patch)
             for game_patch in self.game_patches
             if game_patch.type in self.PATCH_TYPE_TO_CLASS
-        }
-
-    @property
-    def installed_patches(self) -> dict[PatchType, BasePatch]:
-        """Get a list of installed patches."""
-        return {
-            patch_type: patch
-            for patch_type, patch in self.patches.items()
-            if patch.is_installed
-        }
+        ]
 
     async def install(
         self, patch_name: PatchType | None = typer.Argument(default=None)
