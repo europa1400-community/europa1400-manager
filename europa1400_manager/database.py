@@ -32,6 +32,15 @@ class Database:
         if self._initialized:
             return
 
+        await self._fetch_all_tables()
+
+    async def refresh(self) -> None:
+        """Force refresh the database by re-fetching all tables."""
+        self._initialized = False
+        await self._fetch_all_tables()
+
+    async def _fetch_all_tables(self) -> None:
+        """Fetch all database tables."""
         # List of all table types to fetch
         table_types: list[Type[DatabaseTable]] = [
             GameLanguageTable,

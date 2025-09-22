@@ -52,13 +52,16 @@ class PatchModule(BaseModule):
 
         return await self._uninstall_patch(patch_name)
 
-    async def _install_patch(self, patch_type: PatchType) -> None:
-        """Install a specific patch."""
-        patch = self.patches.get(patch_type)
+    def _get_patch_by_id(self, patch_id: str) -> BasePatch | None:
+        """Get a patch by its ID."""
+        return next((p for p in self.patches if p.name == patch_id), None)
 
+    async def _install_patch(self, patch_id: str) -> None:
+        """Install a specific patch."""
+        patch = self._get_patch_by_id(patch_id)
         if patch is None:
             DialogUtils.tell(
-                self.config.app_mode, f"Patch {patch_type} is not supported."
+                self.config.app_mode, f"Patch {patch_id} is not supported."
             )
             return
 
@@ -76,13 +79,12 @@ class PatchModule(BaseModule):
             f"{patch.friendly_name} has been installed successfully.",
         )
 
-    async def _uninstall_patch(self, patch_type: PatchType) -> None:
+    async def _uninstall_patch(self, patch_id: str) -> None:
         """Uninstall a specific patch."""
-        patch = self.patches.get(patch_type)
-
+        patch = self._get_patch_by_id(patch_id)
         if patch is None:
             DialogUtils.tell(
-                self.config.app_mode, f"Patch {patch_type} is not supported."
+                self.config.app_mode, f"Patch {patch_id} is not supported."
             )
             return
 

@@ -18,11 +18,7 @@ class SimplePatch(BasePatch):
     @property
     def file_path(self) -> Path:
         """Path to the file in the game directory."""
-        return (
-            self.config.game_path
-            / self.game_patch.relative_destination
-            / self.file_name
-        )
+        return self.config.game_path / self.file_name
 
     @property
     def is_installed(self) -> bool:
@@ -45,6 +41,8 @@ class SimplePatch(BasePatch):
                             f.write(chunk)
             self.file_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(file_path), str(self.file_path))
+
+        await self.execute_file_operations()
 
     async def uninstall(self) -> None:
         """Uninstall the patch."""

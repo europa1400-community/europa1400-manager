@@ -1,3 +1,4 @@
+import configparser
 import os
 from pathlib import Path
 from tkinter import messagebox, simpledialog
@@ -132,8 +133,16 @@ class DatabaseUtils:
             / EnvUtils.get_database_files_base_path()
             / table_type.FILE_NAME
         )
+
+        headers = {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "Accept-Encoding": "deflate",
+        }
+
         async with aiohttp.ClientSession() as session:
-            async with session.get(str(url)) as response:
+            async with session.get(str(url), headers=headers) as response:
                 response.raise_for_status()
                 text = await response.text()
                 table = table_type.from_yaml(text)
@@ -146,8 +155,15 @@ class DatabaseUtils:
     @staticmethod
     async def read_yaml_file(url: URL) -> dict[str, Any]:
         """Read a YAML file from a URL and return its contents."""
+        headers = {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "Accept-Encoding": "deflate",
+        }
+
         async with aiohttp.ClientSession() as session:
-            async with session.get(str(url)) as response:
+            async with session.get(str(url), headers=headers) as response:
                 response.raise_for_status()
                 text = await response.text()
 
@@ -225,3 +241,24 @@ class MetadataUtils:
             setattr(metadata, other_key, chosen_value)
 
         return metadata
+
+
+class IniUtils:
+    @staticmethod
+    def set_key_value(
+        file_path: Path, section: str, key: str, value: str | int | float | bool
+    ) -> None:
+        """Set a key-value pair in an INI file section."""
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+
+        config_parser = configparser.ConfigParser()
+        if file_path.exists():
+            config_parser.read(file_path, encoding="utf-8")
+
+        if not config_parser.has_section(section):
+            config_parser.add_section(section)
+
+        config_parser.set(section, key, str(value))
+
+        with open(file_path, "w", encoding="utf-8") as config_file:
+            config_parser.write(config_file)

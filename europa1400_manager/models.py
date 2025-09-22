@@ -8,6 +8,17 @@ from dataclass_wizard import YAMLWizard
 from europa1400_manager.const import PatchType
 
 
+@dataclass
+class FileOperation(YAMLWizard):
+    """Base class for file operations."""
+
+    type: str
+    file_name: str | None = None
+    section: str | None = None
+    key: str | None = None
+    value: str | int | float | bool | None = None
+
+
 def table(filename: str) -> Any:
     def wrapper(cls: type[Any]) -> type[Any]:
         cls.FILE_NAME = filename
@@ -66,9 +77,10 @@ class GameExecutableToMetadata(DatabaseElement):
 @dataclass
 class GamePatch(NamedDatabaseElement):
     url: str
-    relative_destination: str = ""
-    type: PatchType = PatchType.SIMPLE
-    file_name: str | None = None
+    type: PatchType
+    file_name: str | list[str] | None = None
+    archive_file_name: str | list[str] | None = None
+    file_operations: list[FileOperation] | None = None
 
 
 @dataclass
