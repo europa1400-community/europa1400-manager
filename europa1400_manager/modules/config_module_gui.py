@@ -14,6 +14,7 @@ from europa1400_manager.utils import DialogUtils
 
 
 class ConfigModuleGui(BaseModuleGui, ConfigModule):
+    INDEX = 2
     FRIENDLY_NAME = "Configuration"
 
     def __init__(

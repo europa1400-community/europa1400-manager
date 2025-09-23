@@ -21,14 +21,17 @@ class BaseModuleGui(BaseModule, ABC):
         root: tk.Tk,
         notebook: ttk.Notebook,
     ) -> None:
-        super().__init__(config, database)
+        BaseModule.__init__(self, config, database)
 
         self.event_emitter = event_emitter
         self.root = root
         self.notebook = notebook
 
         self.tab = ttk.Frame(notebook)
-        notebook.add(self.tab, text=self.FRIENDLY_NAME)
+
+    def register_tab(self) -> None:
+        """Add this module's tab to the notebook."""
+        self.notebook.add(self.tab, text=self.FRIENDLY_NAME)
 
     def update_gui(self) -> None:
         """Update the GUI elements for this module."""

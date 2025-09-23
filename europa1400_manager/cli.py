@@ -5,6 +5,7 @@ from europa1400_manager.modules.base_module import BaseModule
 from europa1400_manager.modules.config_module import ConfigModule
 from europa1400_manager.modules.info_module import InfoModule
 from europa1400_manager.modules.license_module import LicenseModule
+from europa1400_manager.modules.overview_module import OverviewModule
 from europa1400_manager.modules.patch_module import PatchModule
 
 
@@ -17,8 +18,10 @@ class Cli:
         info_module = InfoModule(config, database)
         patch_module = PatchModule(config, database)
         license_module = LicenseModule(config, database)
+        overview_module = OverviewModule(config, database, info_module)
 
         self.modules: list[BaseModule] = [
+            overview_module,
             config_module,
             info_module,
             patch_module,

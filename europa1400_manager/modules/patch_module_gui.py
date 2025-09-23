@@ -15,6 +15,7 @@ from europa1400_manager.patches.base_patch import BasePatch
 
 
 class PatchModuleGui(BaseModuleGui, PatchModule):
+    INDEX = 3
     FRIENDLY_NAME = "Patches"
 
     def __init__(
@@ -25,7 +26,8 @@ class PatchModuleGui(BaseModuleGui, PatchModule):
         root: tk.Tk,
         notebook: ttk.Notebook,
     ) -> None:
-        super().__init__(config, database, event_emitter, root, notebook)
+        PatchModule.__init__(self, config, database)
+        BaseModuleGui.__init__(self, config, database, event_emitter, root, notebook)
         main_frame = ttk.LabelFrame(self.tab, text="Patches", padding="10")
         main_frame.pack(fill="both", expand=True, padx=5, pady=5)
 

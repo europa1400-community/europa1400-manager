@@ -13,6 +13,7 @@ from europa1400_manager.modules.info_module import InfoModule
 
 @dataclass
 class InfoModuleGui(BaseModuleGui, InfoModule):
+    INDEX = 1
     FRIENDLY_NAME = "Information"
 
     def __init__(

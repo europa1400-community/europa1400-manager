@@ -11,6 +11,7 @@ from europa1400_manager.modules.base_module_gui import BaseModuleGui
 from europa1400_manager.modules.config_module_gui import ConfigModuleGui
 from europa1400_manager.modules.info_module_gui import InfoModuleGui
 from europa1400_manager.modules.license_module_gui import LicenseModuleGui
+from europa1400_manager.modules.overview_module_gui import OverviewModuleGui
 from europa1400_manager.modules.patch_module_gui import PatchModuleGui
 
 
@@ -40,16 +41,31 @@ class Gui:
         license_module = LicenseModuleGui(
             config, database, event_emitter, self.root, self.notebook
         )
-
         patch_module = PatchModuleGui(
             config, database, event_emitter, self.root, self.notebook
         )
-        self.modules: list[BaseModuleGui] = [
+        overview_module = OverviewModuleGui(
+            config,
+            database,
+            event_emitter,
+            self.root,
+            self.notebook,
+            info_module,
+        )
+
+        all_modules = [
+            overview_module,
             info_module,
             config_module,
-            license_module,
             patch_module,
+            license_module,
         ]
+        self.modules: list[BaseModuleGui] = sorted(
+            all_modules, key=lambda module: getattr(module, "INDEX", 999)
+        )
+
+        for module in self.modules:
+            module.register_tab()
 
         self.event_emitter.on(EVENT_UPDATE_ALL_MODULES, self._update_all_modules)
 

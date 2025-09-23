@@ -10,6 +10,7 @@ from europa1400_manager.modules.license_module import LicenseModule
 
 
 class LicenseModuleGui(BaseModuleGui, LicenseModule):
+    INDEX = 4
     FRIENDLY_NAME = "Licenses"
 
     def __init__(
