@@ -29,6 +29,11 @@ dev = [
     "types-pyyaml>=6.0.12.20250516",
     "types-requests>=2.32.4.20250611",
 ]
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocs-gen-files>=0.6.1",
+    "mkdocs-material>=9.7.7",
+]
 test = ["pytest>=8.4.0", "pytest-cov>=6.2.1"]
 
 [tool.ty.environment]
