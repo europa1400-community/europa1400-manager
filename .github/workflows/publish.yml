@@ -1,8 +1,17 @@
 name: Publish
 
+# Builds the executables. Called by the release workflow (which attaches them to the new release); run it by hand
+# with an existing tag to rebuild and re-attach the executables of that release.
 on:
-  release:
-    types: [created]
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to rebuild and attach the executables to (e.g. 1.2.1)
+        required: true
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -25,6 +34,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.sha }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4
@@ -52,22 +63,29 @@ jobs:
           mv dist/${{ matrix.cli_executable_name }} dist/${{ matrix.cli_asset_name }}
           mv dist/${{ matrix.gui_executable_name }} dist/${{ matrix.gui_asset_name }}
 
-      - name: Upload CLI Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload executables
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist/${{ matrix.cli_asset_name }}
-          asset_name: ${{ matrix.cli_asset_name }}
-          asset_content_type: application/octet-stream
+          name: executables-${{ matrix.os }}
+          path: |
+            dist/${{ matrix.cli_asset_name }}
+            dist/${{ matrix.gui_asset_name }}
+          if-no-files-found: error
 
-      - name: Upload GUI Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  attach:
+    if: inputs.tag != '' # manual run only (when called, github.event_name is the caller's event)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist/${{ matrix.gui_asset_name }}
-          asset_name: ${{ matrix.gui_asset_name }}
-          asset_content_type: application/octet-stream
+          pattern: executables-*
+          merge-multiple: true
+          path: assets
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ inputs.tag }}" assets/* --clobber --repo "${{ github.repository }}"
