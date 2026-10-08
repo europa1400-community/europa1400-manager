@@ -6,15 +6,15 @@ readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
 dependencies = [
-    "aenum>=3.1.16",
     "aiohttp>=3.12.14",
-    "async-tkinter-loop>=0.9.3",
     "dataclass-wizard[yaml]>=0.35.0",
-    "pyee>=13.0.0",
+    "platformdirs>=4.3",
+    "psutil>=7.0",
+    "pyside6-essentials>=6.9",
     "python-dotenv>=1.1.0",
-    "requests>=2.32.4",
+    "qasync>=0.27",
     "typer>=0.16.0",
-    "tzdata>=2025.2",
+    "tzdata>=2026.5",
 ]
 
 [dependency-groups]
@@ -24,6 +24,8 @@ dev = [
     "pip-licenses>=5.0.0",
     "pre-commit>=4.2.0",
     "pyinstaller>=6.14.1",
+    "pytest>=8.4.0",
+    "pytest-asyncio>=1.4.0",
     "ruff>=0.11.13",
     "ty>=0.0.85",
     "types-pyyaml>=6.0.12.20250516",
@@ -38,3 +40,11 @@ test = ["pytest>=8.4.0", "pytest-cov>=6.2.1"]
 
 [tool.ty.environment]
 python-version = "3.13"
+
+[tool.ty.src]
+exclude = ["scripts"]  # MkDocs build helpers (docs dependency group)
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"

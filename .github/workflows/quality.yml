@@ -69,3 +69,26 @@ jobs:
       - name: Run ty
         run: |
           uv run ty check .
+
+  test:
+    needs: cache
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: 3.13
+          enable-cache: true
+          cache-suffix: uv-${{ runner.os }}-3.13
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Run tests
+        run: uv run pytest -q
