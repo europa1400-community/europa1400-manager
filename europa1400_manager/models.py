@@ -81,6 +81,8 @@ class GamePatch(NamedDatabaseElement):
     file_name: str | list[str] | None = None
     archive_file_name: str | list[str] | None = None
     file_operations: list[FileOperation] | None = None
+    # ids of patches that must be installed first (installed automatically)
+    requires: list[str] | None = None
 
 
 @dataclass
@@ -143,6 +145,17 @@ class GameExecutableToMetadataTable(DatabaseTable):
 @dataclass
 @table("patch.yml")
 class GamePatchTable(DatabaseTable):
+    elements: list[GamePatch]
+
+
+@dataclass
+@table("e1400patch.yml")
+class GameE1400PatchTable(DatabaseTable):
+    """Patches of europa1400-patches (loader and patch modules).
+
+    A table of its own: managers up to 1.1 cannot parse the new patch types and would drop the whole patch.yml.
+    """
+
     elements: list[GamePatch]
 
 
