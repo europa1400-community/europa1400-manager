@@ -22,7 +22,7 @@
 
 - The project uses **uv** for dependency management and is distributed as a **PyInstaller** executable.
 - It is contained in a Python package and targets **Python 3.13**.
-- Development uses **ruff** and **mypy**; always add type hints.
+- Development uses **ruff** and **ty**; always add type hints.
 - The app is platform independent (Windows, macOS and Linux).
 - Game installations for development live in the `./game/` directory (with subdirectories per version).
 - Game assets reside in the `assets/` directory.
