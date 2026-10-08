@@ -1,0 +1,73 @@
+site_name: Europa 1400 Manager
+site_url: https://europa1400-community.github.io/europa1400-manager/
+site_description: Install community patches and fixes for Europa 1400 The Guild
+site_author: Europa 1400 Community
+copyright: Copyright &copy; 2025-2026 Europa 1400 Community
+repo_url: https://github.com/europa1400-community/europa1400-manager/
+repo_name: europa1400-community/europa1400-manager
+edit_uri: edit/master/docs/
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Patches: patches.md
+  - All patches: patch-list.md
+  - Command line: command-line.md
+  - Troubleshooting: troubleshooting.md
+  - Development: development.md
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+    - content.action.edit
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      name: View on GitHub
+      link: https://github.com/europa1400-community/europa1400-manager/
+    - icon: fontawesome/brands/discord
+      name: Join us on Discord
+      link: https://discord.gg/jB9HYY8DpT
+
+plugins:
+  - search
+  - gen-files:
+      scripts:
+        - scripts/gen_patch_table.py
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.details
+  - pymdownx.superfences
+  - tables
+  - toc:
+      permalink: "#"
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn

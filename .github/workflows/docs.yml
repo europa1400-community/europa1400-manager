@@ -1,0 +1,55 @@
+name: Website
+
+# Builds the MkDocs website (docs/, mkdocs.yml) and publishes it with GitHub Pages:
+# https://europa1400-community.github.io/europa1400-manager/
+# Daily as well, because the patch list is generated from europa1400-database.
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DISABLE_MKDOCS_2_WARNING: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          python-version: 3.13
+          enable-cache: true
+
+      - name: Build
+        run: |
+          uv sync --group docs
+          uv run mkdocs build --strict
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
