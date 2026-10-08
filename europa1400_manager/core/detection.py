@@ -135,11 +135,10 @@ def identify(folder: Path, database: Database) -> GameInfo:
         if known:
             _apply(info, known.metadata, "hash")
 
-    server = (
-        _existing(folder / "server", "server.dll")
-        if _existing(folder, "server")
-        else None
-    )
+    server_dir = _existing(
+        folder, "server"
+    )  # "Server" or "server" (case matters under Linux/Wine)
+    server = _existing(server_dir, "server.dll") if server_dir else None
     if server:
         info.server_sha256 = sha256_of(server)
         known = known_files.get(info.server_sha256)

@@ -44,7 +44,9 @@ class E1400PatchLoaderHandler(Handler):
             )
             previous = remembered or DEFAULT_SERVER
         with tempfile.TemporaryDirectory(prefix="e1400-") as temporary:
-            root = Path(temporary)
+            root = Path(
+                temporary
+            ).resolve()  # long path names (temp folders can be 8.3 short names)
             files = download.extract(archive, root)
             if not (root / LOADER_DIR / "server.dll").exists():
                 raise PatchError(
@@ -121,7 +123,9 @@ class E1400PatchModuleHandler(Handler):
     ) -> None:
         archive = await self.fetch(progress)
         with tempfile.TemporaryDirectory(prefix="e1400-") as temporary:
-            root = Path(temporary)
+            root = Path(
+                temporary
+            ).resolve()  # long path names (temp folders can be 8.3 short names)
             files = download.extract(archive, root)
             kind = next(
                 (

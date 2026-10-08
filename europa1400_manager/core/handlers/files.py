@@ -55,7 +55,9 @@ class ArchiveHandler(Handler):
         if not download.is_archive(archive):
             raise PatchError(tr("error.not_an_archive", patch=self.patch.id))
         with tempfile.TemporaryDirectory(prefix="e1400-") as temporary:
-            root = Path(temporary)
+            root = Path(
+                temporary
+            ).resolve()  # long path names (temp folders can be 8.3 short names)
             files = download.extract(archive, root)
             for source, target in zip(self.sources, self.targets):
                 transaction.write_file(
