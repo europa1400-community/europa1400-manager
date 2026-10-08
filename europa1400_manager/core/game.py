@@ -10,6 +10,7 @@ import tempfile
 from pathlib import Path
 
 import psutil
+import shutil
 
 from europa1400_manager.core import ini
 from europa1400_manager.core.database import Database
@@ -24,6 +25,7 @@ from europa1400_manager.i18n import tr
 
 log = logging.getLogger(__name__)
 
+GAME_INI_BACKUP = "game.ini.manager-backup"
 PATH_KEYS = (
     ("General", "GamePath", ""),
     ("General", "GfxPath", "resources"),
@@ -135,6 +137,12 @@ class Game:
         if current.endswith(("\\", "/")) or not current:
             text += "\\"
         return text
+
+    def backup_game_ini(self) -> None:
+        """Keep the game.ini as it was before the manager changed it for the first time."""
+        backup = self.path / GAME_INI_BACKUP
+        if self.game_ini.exists() and not backup.exists():
+            shutil.copy2(self.game_ini, backup)
 
     def repair_paths(self) -> list[str]:
         problems = self.path_problems()

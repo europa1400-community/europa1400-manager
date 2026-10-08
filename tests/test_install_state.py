@@ -16,7 +16,7 @@ def _source(tmp_path: Path, name: str, data: bytes) -> Path:
 def test_install_backs_up_and_uninstall_restores(
     tmp_path: Path, game_dir: Path
 ) -> None:
-    (game_dir / "ddraw.dll").write_bytes(b"store's own ddraw")
+    (game_dir / "ddraw.dll").write_bytes(b"player's own ddraw")
     original_ini = (game_dir / "game.ini").read_bytes()
     state = InstallState(game_dir)
     transaction = state.begin("ddraw_compat", "0.6.0")
@@ -29,7 +29,7 @@ def test_install_backs_up_and_uninstall_restores(
     assert (game_dir / "ddraw.dll").read_bytes() == b"new ddraw"
     assert state.patches["ddraw_compat"].version == "0.6.0"
     assert state.uninstall("ddraw_compat") == []
-    assert (game_dir / "ddraw.dll").read_bytes() == b"store's own ddraw"
+    assert (game_dir / "ddraw.dll").read_bytes() == b"player's own ddraw"
     assert not (game_dir / "sub").exists()
     assert (game_dir / "game.ini").read_bytes() == original_ini
     assert "ddraw_compat" not in InstallState(game_dir).patches

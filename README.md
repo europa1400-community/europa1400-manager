@@ -17,6 +17,7 @@ No installation needed: download and start. The manager finds Steam and GOG inst
 
 ## What it does
 
+- **Recommended setup**: one click sets up what the community recommends for your game version.
 - **Patches**: graphics fixes for current Windows, the multiplayer Netfix and more; what a patch needs is installed
   with it, files it replaces are backed up and restored when you uninstall it.
 - **Game settings**: display mode, sound, multiplayer name and address, and every other game.ini value, without

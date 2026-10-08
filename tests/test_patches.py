@@ -260,3 +260,73 @@ def test_path_problems(game_dir: Path, database: Database) -> None:
     assert [p[0] for p in game.path_problems()] == ["GfxPath"]
     assert game.repair_paths() == ["GfxPath"]
     assert game.path_problems() == []
+
+
+async def test_recommendations(
+    game_dir: Path, database: Database, downloads: Any
+) -> None:
+    from europa1400_manager.core import ini, recommendations
+    from europa1400_manager.core.models import RecommendationTable
+
+    database.tables[RecommendationTable] = _table(
+        RecommendationTable,
+        [
+            {
+                "id": "gold",
+                "name": "Gold",
+                "metadata": {"edition": "gold"},
+                "patches": [{"patch": "ddraw_compat", "level": "optional"}],
+                "settings": [
+                    {
+                        "section": "General",
+                        "key": "Bildmodus",
+                        "value": "DIRECTWINDOW",
+                        "level": "optional",
+                    },
+                    {"section": "General", "key": "show_intro", "value": "0"},
+                ],
+            },
+            {
+                "id": "de",
+                "name": "DE",
+                "metadata": {"edition": "gold", "language": "de"},
+                "patches": [
+                    {
+                        "patch": "netfix",
+                        "level": "recommended",
+                        "reason": {"en": "host fix", "de": "Host-Fix"},
+                    },
+                    {"patch": "plugin"},
+                ],
+            },
+            {
+                "id": "en",
+                "name": "EN",
+                "metadata": {"language": "en"},
+                "patches": [{"patch": "dxvk"}],
+            },
+        ],
+    )
+    service = PatchService(Game.open(game_dir, database), database)
+    items = recommendations.items(service, "de")
+    keys = [(i.key, i.level) for i in items]
+    assert keys == [
+        ("netfix", "recommended"),
+        ("plugin", "recommended"),
+        ("game.ini|general|show_intro", "recommended"),
+        ("ddraw_compat", "optional"),
+        ("game.ini|general|bildmodus", "optional"),
+    ]
+    netfix = next(i for i in items if i.key == "netfix")
+    assert netfix.reason == "Host-Fix" and netfix.available and not netfix.done
+    plugin = next(i for i in items if i.key == "plugin")
+    assert not plugin.available  # the database marks it for English games only
+    assert all(i.key != "dxvk" for i in items)  # English recommendation does not apply
+
+    chosen = [i for i in items if i.recommended and i.available]
+    done = await recommendations.apply(service, chosen)
+    assert "netfix" in done and "e1400patch" in done
+    assert ini.get(game_dir / "game.ini", "General", "show_intro") == "0"
+    assert (game_dir / "game.ini.manager-backup").exists()
+    after = {i.key: i.done for i in recommendations.items(service, "de")}
+    assert after["netfix"] and not after["ddraw_compat"]

@@ -11,6 +11,7 @@ fits.
 
 - **Finds and identifies your game**: Steam, GOG and CD installations; edition, version, language and store, exactly
   by checksum for known versions.
+- **Recommended setup in one click**: the fixes and settings the community recommends for your exact game version.
 - **Installs patches** from their official sources; what a patch needs comes along, conflicting patches are refused.
   Files a patch replaces are backed up and restored when you uninstall it; a failed installation is rolled back.
 - **Game settings**: display mode, sound, multiplayer name and address, every other game.ini value, and a repair for

@@ -37,8 +37,8 @@ installed with it. Can help with performance or display problems on some systems
 
 ### DDrawCompat (`ddraw_compat`)
 
-Compatibility fixes for DirectDraw, used by the classic renderer. GOG and Steam already ship a copy; installing
-replaces it with the version from the database, uninstalling restores the shipped one.
+Compatibility fixes for DirectDraw, used by the classic renderer. A ddraw.dll you put into the game folder yourself is
+backed up and restored on uninstall.
 
 !!! tip
     Start with as few patches as possible and add one at a time. If something gets worse, uninstall the last one.

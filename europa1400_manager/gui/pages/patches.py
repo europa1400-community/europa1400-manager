@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
 )
 
 from europa1400_manager import i18n
+from europa1400_manager.core import recommendations
 from europa1400_manager.core.models import PatchCategory
 from europa1400_manager.core.patches import PatchService, PatchState, PatchStatus
 from europa1400_manager.gui.state import AppState
@@ -39,6 +40,7 @@ class PatchesPage(Page):
     def __init__(self, state: AppState) -> None:
         super().__init__(tr("ui.patches"), tr("ui.patches_subtitle"))
         self.state = state
+        self.recommended: set[str] = set()
         filters = QHBoxLayout()
         self.search = QLineEdit()
         self.search.setPlaceholderText(tr("ui.search"))
@@ -75,6 +77,11 @@ class PatchesPage(Page):
         text = self.search.text().strip().lower()
         category = self.category.currentData()
         statuses = service.statuses()
+        self.recommended = {
+            i.key
+            for i in recommendations.items(service, i18n.language())
+            if i.kind == "patch" and i.recommended
+        }
         shown = 0
         for status in sorted(
             statuses,
@@ -130,6 +137,12 @@ class PatchesPage(Page):
             )
         elif status.compatible is True:
             header.addWidget(Chip(tr("ui.fits"), "success", tr("ui.fits_hint")))
+        if patch.id in self.recommended:
+            header.addWidget(
+                Chip(
+                    tr("ui.level_recommended"), "accent", tr("ui.recommended_chip_hint")
+                )
+            )
         header.addWidget(Chip(tr(f"category.{patch.category or 'other'}"), "muted"))
         header.addStretch(1)
         card.body.addLayout(header)

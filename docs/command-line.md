@@ -10,6 +10,7 @@ and power users. `--help` works on every level. `--game <folder>` uses another i
 | `info` | the detected game (edition, version, language, store, executables) |
 | `start` / `start --dx6` | start the game (Direct3D 8 / classic renderer) |
 | `repair-paths` | point the paths in game.ini to the game folder (after moving the game) |
+| `recommended [--apply] [--all]` | recommended patches and settings for this game version; `--apply` sets up the recommended ones, `--all` also the optional |
 | `patches list` | patches and their state |
 | `patches install <id> ...` | install patches and what they need |
 | `patches uninstall <id> ... [--with-dependents]` | uninstall; replaced files are restored |

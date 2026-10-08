@@ -18,6 +18,12 @@ Older versions and release notes: [releases](https://github.com/europa1400-commu
 
 The manager remembers the folder; with several installations switch between them on the *Manager* page.
 
+## Recommended setup
+
+The start page lists what the community recommends for your exact game version: the recommended items are
+selected, optional ones (for example window mode) you can add. *Set up selected* installs and sets everything at once.
+On the command line: `recommended` shows the list, `recommended --apply` sets it up.
+
 ## Installing a patch
 
 Open *Patches*, pick a patch and click *Install*. Patches it needs are offered too. *Uninstall* removes it again and

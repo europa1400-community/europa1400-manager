@@ -140,6 +140,32 @@ class GamePatch(NamedDatabaseElement):
 
 
 @dataclass
+class RecommendedPatch(YAMLWizard):
+    patch: str
+    level: str = "recommended"  # "recommended" (selected by default) or "optional"
+    reason: dict[str, str] | None = None
+
+
+@dataclass
+class RecommendedSetting(YAMLWizard):
+    section: str
+    key: str
+    value: str
+    file: str = "game.ini"
+    level: str = "recommended"
+    reason: dict[str, str] | None = None
+
+
+@dataclass
+class Recommendation(NamedDatabaseElement):
+    """A one-click setup for the game versions its metadata matches."""
+
+    metadata: GameMetadataId = field(default_factory=GameMetadataId)
+    patches: list[RecommendedPatch] | None = None
+    settings: list[RecommendedSetting] | None = None
+
+
+@dataclass
 class GameMetadataToPatch(DatabaseElement):
     metadata: GameMetadataId
     patch: str
@@ -225,6 +251,12 @@ class GameE1400PatchTable(DatabaseTable):
 
 
 @dataclass
+@table("recommendation.yml")
+class RecommendationTable(DatabaseTable):
+    elements: list[Recommendation]
+
+
+@dataclass
 @table("metadata_to_patch.yml")
 class GameMetadataToPatchTable(DatabaseTable):
     elements: list[GameMetadataToPatch]
@@ -242,4 +274,5 @@ ALL_TABLES: list[type[DatabaseTable]] = [
     GamePatchTable,
     GameE1400PatchTable,
     GameMetadataToPatchTable,
+    RecommendationTable,
 ]

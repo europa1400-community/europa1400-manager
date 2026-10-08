@@ -7,8 +7,17 @@ from pathlib import Path
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+)
 
+from europa1400_manager.core import game_settings, recommendations
 from europa1400_manager.core.detection import FIELDS
 from europa1400_manager.core.errors import PermissionProblemError
 from europa1400_manager.gui import theme
@@ -145,6 +154,7 @@ class HomePage(Page):
         self.content.addWidget(card)
 
         self._notices()
+        self._recommendations()
         self._patch_summary()
 
     def _notices(self) -> None:
@@ -178,6 +188,85 @@ class HomePage(Page):
             await asyncio.to_thread(game.repair_paths)
 
         self.state.run(self, work, done=lambda _: self.refresh())
+
+    def _recommendations(self) -> None:
+        service = self.state.service
+        if service is None:
+            return
+        items = recommendations.items(service, i18n.language())
+        if not items:
+            return
+        card = Card()
+        title = QLabel(tr("ui.recommended_setup"))
+        title.setObjectName("CardTitle")
+        card.body.addWidget(title)
+        missing = [i for i in items if i.recommended and not i.done and i.available]
+        card.body.addWidget(
+            muted(
+                tr("ui.recommended_hint") if missing else tr("ui.recommended_complete")
+            )
+        )
+        boxes: list[tuple[QCheckBox, recommendations.RecommendedItem]] = []
+        for item in items:
+            box = QCheckBox(_item_title(item))
+            box.setChecked(item.done or (item.recommended and item.available))
+            box.setEnabled(not item.done and item.available)
+            tooltip = item.reason
+            if not item.available:
+                tooltip = tr("ui.not_for_this_game_hint")
+            box.setToolTip(tooltip)
+            row = QVBoxLayout()
+            row.setSpacing(0)
+            row.addWidget(box)
+            label = item.reason if item.available else tr("ui.not_for_this_game_hint")
+            level = (
+                tr("ui.level_recommended")
+                if item.recommended
+                else tr("ui.level_optional")
+            )
+            done = f"  ·  {tr('ui.already_done')}" if item.done else ""
+            note = muted(f"{level}{done}  ·  {label}")
+            note.setContentsMargins(26, 0, 0, 6)
+            row.addWidget(note)
+            card.body.addLayout(row)
+            boxes.append((box, item))
+        apply = primary(tr("ui.apply_selected"))
+
+        def update_button() -> None:
+            apply.setEnabled(any(b.isChecked() and b.isEnabled() for b, _ in boxes))
+
+        for box, _ in boxes:
+            box.toggled.connect(update_button)
+        update_button()
+        apply.clicked.connect(
+            lambda: self._apply(
+                [i for b, i in boxes if b.isChecked() and b.isEnabled()]
+            )
+        )
+        buttons = QHBoxLayout()
+        buttons.addWidget(apply)
+        buttons.addStretch(1)
+        card.body.addLayout(buttons)
+        self.content.addWidget(card)
+
+    def _apply(self, chosen: list[recommendations.RecommendedItem]) -> None:
+        service = self.state.service
+        if service is None or not chosen:
+            return
+
+        def progress(message: str, fraction: float | None) -> None:
+            self.state.progress.emit(message, -1.0 if fraction is None else fraction)
+
+        async def work() -> list[str]:
+            return await recommendations.apply(service, chosen, progress)
+
+        def done(_: list[str]) -> None:
+            QMessageBox.information(
+                self, tr("ui.recommended_setup"), tr("ui.recommended_applied")
+            )
+            self.state.patches_changed.emit()
+
+        self.state.run(self, work, tr("ui.applying"), done)
 
     def _patch_summary(self) -> None:
         service = self.state.service
@@ -221,3 +310,23 @@ class HomePage(Page):
             game.launch(renderer)
 
         self.state.run(self, work)
+
+
+def _item_title(item: recommendations.RecommendedItem) -> str:
+    """Patch name, or the setting with its label from the settings page when the manager knows it."""
+    if item.kind == "patch" or item.setting is None:
+        return item.title
+    setting = item.setting
+    for known in game_settings.SETTINGS:
+        if (
+            known.section.lower() == setting.section.lower()
+            and known.key.lower() == setting.key.lower()
+        ):
+            value = setting.value
+            if known.kind == "bool":
+                value = tr("ui.on") if value not in ("0", "") else tr("ui.off")
+            for choice, label in known.choices:
+                if choice.lower() == setting.value.lower():
+                    value = tr(label)
+            return f"{tr(known.label)}: {value}"
+    return item.title

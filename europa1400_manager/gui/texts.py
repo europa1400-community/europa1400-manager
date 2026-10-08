@@ -105,6 +105,30 @@ TEXTS = {
         "Updates available: {names}", "Updates verfügbar: {names}"
     ),
     "ui.manage_patches": _t("Manage patches", "Patches verwalten"),
+    # recommendations
+    "ui.recommended_setup": _t("Recommended setup", "Empfohlene Einrichtung"),
+    "ui.recommended_hint": _t(
+        "Fixes and settings the community recommends for your game version. Choose and apply with one click.",
+        "Fixes und Einstellungen, die die Community für deine Spielversion empfiehlt. Auswählen und mit einem Klick "
+        "einrichten.",
+    ),
+    "ui.recommended_complete": _t(
+        "Everything recommended for your game version is set up.",
+        "Alles Empfohlene für deine Spielversion ist eingerichtet.",
+    ),
+    "ui.level_recommended": _t("Recommended", "Empfohlen"),
+    "ui.level_optional": _t("Optional", "Optional"),
+    "ui.already_done": _t("already set up", "schon eingerichtet"),
+    "ui.apply_selected": _t("Set up selected", "Ausgewählte einrichten"),
+    "ui.applying": _t("Setting up ...", "Richte ein ..."),
+    "ui.recommended_applied": _t(
+        "Done. You can start the game.", "Fertig. Du kannst das Spiel starten."
+    ),
+    "ui.recommended_chip_hint": _t(
+        "Recommended for your game version", "Für deine Spielversion empfohlen"
+    ),
+    "ui.on": _t("on", "an"),
+    "ui.off": _t("off", "aus"),
     # patches
     "ui.search": _t("Search ...", "Suchen ..."),
     "ui.all_categories": _t("All categories", "Alle Kategorien"),

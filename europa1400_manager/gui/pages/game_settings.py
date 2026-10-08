@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import shutil
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl
@@ -31,7 +30,7 @@ from europa1400_manager.gui.state import AppState
 from europa1400_manager.gui.widgets import Banner, Card, Page, clear, muted, primary
 from europa1400_manager.i18n import tr
 
-BACKUP_NAME = "game.ini.manager-backup"
+from europa1400_manager.core.game import GAME_INI_BACKUP as BACKUP_NAME
 
 
 class GameSettingsPage(Page):
@@ -196,9 +195,7 @@ class GameSettingsPage(Page):
             return
         try:
             game.ensure_not_running()
-            backup = game.path / BACKUP_NAME
-            if not backup.exists():
-                shutil.copy2(game.game_ini, backup)
+            game.backup_game_ini()
             ini.set_values(game.game_ini, changes)
         except (ManagerError, OSError) as error:
             QMessageBox.warning(self, tr("ui.error"), str(error))

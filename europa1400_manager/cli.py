@@ -19,6 +19,7 @@ from europa1400_manager.core import (
     game_settings,
     ini,
     logs,
+    recommendations,
     savegames,
     updates,
 )
@@ -246,6 +247,40 @@ def patches_uninstall(
             for warning in service.uninstall(patch_id, with_dependents):
                 typer.secho(warning, fg="yellow")
             typer.echo(f"Uninstalled: {patch_id}")
+
+    run(action)
+
+
+@app.command()
+def recommended(
+    game: GameOption = None,
+    apply: Annotated[
+        bool, typer.Option("--apply", help="Set up what is recommended.")
+    ] = False,
+    include_optional: Annotated[
+        bool, typer.Option("--all", help="With --apply: also the optional items.")
+    ] = False,
+) -> None:
+    """Show (and with --apply set up) the recommended patches and settings for this game version."""
+
+    def action() -> None:
+        context = Context(game)
+        service = PatchService(context.game(), context.database)
+        items = recommendations.items(service, i18n.language())
+        if not items:
+            typer.echo("No recommendations for this game version.")
+            return
+        for item in items:
+            state = "done" if item.done else ("n/a" if not item.available else "")
+            typer.echo(f"{item.level:<12} {state:<5} {item.title}  ({item.reason})")
+        if apply:
+            chosen = [
+                i
+                for i in items
+                if i.available and not i.done and (i.recommended or include_optional)
+            ]
+            done = asyncio.run(recommendations.apply(service, chosen, _progress_line))
+            typer.echo(f"Set up: {', '.join(done) or 'nothing to do'}")
 
     run(action)
 
