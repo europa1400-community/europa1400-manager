@@ -20,8 +20,8 @@ Supported: Gold 2.06, German (GOG, Steam). Other versions follow.
 ### Network Fix (`networkfix`)
 
 An older, independent community fix for multiplayer stability
-([europa1400-networkfix](https://github.com/maci0/europa1400-networkfix)). Do not combine it with Netfix until the
-combination is tested.
+([europa1400-networkfix](https://github.com/maci0/europa1400-networkfix)). The manager does not install it together
+with Netfix.
 
 ## Graphics
 
@@ -32,12 +32,13 @@ Runs the game's Direct3D 8 graphics through Direct3D 9 and sets the option that 
 
 ### DXVK (`dxvk`)
 
-Translates Direct3D 9 to Vulkan. Can help with performance or display problems on some systems, mostly together with
-DxWrapper and on Linux.
+Translates Direct3D 9 to Vulkan. The game uses Direct3D 8, so DXVK only works together with DxWrapper, which is
+installed with it. Can help with performance or display problems on some systems, mostly on Linux.
 
 ### DDrawCompat (`ddraw_compat`)
 
-Compatibility fixes for DirectDraw, used by the older game executables.
+Compatibility fixes for DirectDraw, used by the classic renderer. GOG and Steam already ship a copy; installing
+replaces it with the version from the database, uninstalling restores the shipped one.
 
 !!! tip
     Start with as few patches as possible and add one at a time. If something gets worse, uninstall the last one.

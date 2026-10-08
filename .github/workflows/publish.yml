@@ -4,6 +4,11 @@ name: Publish
 # with an existing tag to rebuild and re-attach the executables of that release.
 on:
   workflow_call:
+    inputs:
+      version:
+        description: Version written into the executables
+        type: string
+        default: ""
   workflow_dispatch:
     inputs:
       tag:
@@ -46,6 +51,14 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --all-groups
+
+      - name: Version
+        shell: bash
+        run: echo '__version__ = "${{ inputs.version || inputs.tag || '0.0.0-dev' }}"' > europa1400_manager/_version.py
+
+      - name: Icon (Windows)
+        if: runner.os == 'Windows'
+        run: uv run python scripts/make_icon.py
 
       - name: Build with PyInstaller
         run: |

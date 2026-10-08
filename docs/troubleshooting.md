@@ -6,21 +6,31 @@ The executables are not signed, so Windows SmartScreen may show "Windows protect
 *Run anyway*. Only download the manager from the
 [releases page](https://github.com/europa1400-community/europa1400-manager/releases) or the links on this website.
 
-## The manager asks for the game folder again
+## "The manager cannot write into the game folder"
 
-The folder is stored in `config.yml` in the folder you start the manager from. Start it from the same folder each time,
-or delete `config.yml` to choose a different game folder.
+Games in `C:\Program Files (x86)` can only be changed with administrator rights. Start the manager as administrator
+(right click → *Run as administrator*), or install the game somewhere else (GOG lets you choose the folder).
 
-## Multiplayer still disconnects
+## The game does not start after moving or copying it
 
-- Only the **host** needs Netfix; check that it is installed on the host's game.
+game.ini contains the game folder. The start page shows a notice with *Repair*; on the command line run
+`europa1400-manager repair-paths`.
+
+## Multiplayer
+
+- Only the **host** needs Netfix.
+- Joining over the Internet without a VPN: the host forwards **TCP port 7531** (game.ini `[Network] Port`) in the
+  router, the others enter the host's address. Finding games in the lobby list works only in a (virtual) LAN.
 - The host's log `e1400patch\logs\e1400patch.log` (in the game folder) shows a line `netfix: session: ...` for every
-  hosted game. Attach it when you report the problem.
-- Report it on [Discord](https://discord.gg/jB9HYY8DpT) or as a
-  [GitHub issue](https://github.com/europa1400-community/europa1400-patches/issues) with the game version
-  (`info show`).
+  hosted game. Attach it when you report a problem.
+
+## Something went wrong
+
+The manager's log is on the *Manager* page (*Log folder*). Report the problem on [Discord](https://discord.gg/jB9HYY8DpT)
+or as a [GitHub issue](https://github.com/europa1400-community/europa1400-manager/issues) with the log and the game
+version from the start page.
 
 ## Removing everything
 
-Uninstall every patch in the manager (or with `patch uninstall <id>`), then delete the manager's folder. Uninstalling
-deletes the files a patch added; the patch loader also restores the `game.ini` setting it changed.
+Uninstall every patch on the *Patches* page, then delete the program. Uninstalling restores the files a patch had
+replaced and the game.ini values it had changed; files you changed yourself afterwards are kept.

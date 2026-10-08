@@ -47,6 +47,8 @@ jobs:
     needs: version
     if: needs.version.outputs.published == 'true'
     uses: ./.github/workflows/publish.yml
+    with:
+      version: ${{ needs.version.outputs.version }}
     permissions:
       contents: write # allows publish.yml's manual attach job (skipped here)
 
