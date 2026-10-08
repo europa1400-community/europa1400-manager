@@ -64,7 +64,7 @@ class PatchModule(BaseModule):
         """Get a patch by its ID."""
         return next((p for p in self.patches if p.name == patch_id), None)
 
-    async def install_requirements(
+    async def _install_requirements(
         self, patch: BasePatch, seen: set[str] | None = None
     ) -> None:
         """Install the patches a patch requires (recursively) that are not installed yet."""
@@ -79,7 +79,7 @@ class PatchModule(BaseModule):
                     f"{patch.friendly_name} requires {required_id}, which is not available."
                 )
             if not required.is_installed:
-                await self.install_requirements(required, seen)
+                await self._install_requirements(required, seen)
                 await required.install()
 
     async def _install_patch(self, patch_id: str) -> None:
@@ -98,7 +98,7 @@ class PatchModule(BaseModule):
             )
             return
 
-        await self.install_requirements(patch)
+        await self._install_requirements(patch)
         await patch.install()
 
         DialogUtils.tell(
