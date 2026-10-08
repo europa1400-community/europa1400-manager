@@ -81,6 +81,8 @@ class GamePatch(NamedDatabaseElement):
     file_name: str | list[str] | None = None
     archive_file_name: str | list[str] | None = None
     file_operations: list[FileOperation] | None = None
+    # ids of patches that must be installed first (installed automatically)
+    requires: list[str] | None = None
 
 
 @dataclass

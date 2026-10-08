@@ -20,6 +20,9 @@ class AppMode(StrEnum):
 class PatchType(StrEnum):
     SIMPLE = auto()
     ARCHIVE = auto()
+    # europa1400-patches: the loader (e1400patch/) and its patch modules (patches/<id>/)
+    E1400PATCH_LOADER = auto()
+    E1400PATCH_MODULE = auto()
 
 
 EVENT_UPDATE_ALL_MODULES = "update_all_modules"
