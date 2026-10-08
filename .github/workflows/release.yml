@@ -1,20 +1,85 @@
 name: Release
 
+# Actions → Release → Run workflow (branch master). No secrets needed besides the automatic GITHUB_TOKEN.
+#
+# 1. semantic-release (dry run) derives the next version from the conventional commits since the last release
+#    (fix: → patch, feat: → minor, feat!:/BREAKING CHANGE → major; nothing releasable → the workflow ends here).
+# 2. The executables are built.
+# 3. Only then semantic-release creates the tag and the GitHub release with generated notes, and the executables are
+#    attached.
 on:
   workflow_dispatch:
 
+concurrency: release
+
+permissions:
+  contents: read
+
 jobs:
-  semantic-release:
+  version:
     runs-on: ubuntu-latest
-    concurrency: release
+    permissions:
+      contents: write # semantic-release checks that it could push the tag
+    outputs:
+      published: ${{ steps.next.outputs.new_release_published }}
+      version: ${{ steps.next.outputs.new_release_version }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
 
-      - name: Semantic Release
+      - id: next
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          dry_run: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.next.outputs.new_release_published }}" = "true" ]; then
+            echo "Releasing **${{ steps.next.outputs.new_release_version }}**" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No releasable commits (fix:/feat:) since the last release." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  build:
+    needs: version
+    if: needs.version.outputs.published == 'true'
+    uses: ./.github/workflows/publish.yml
+    permissions:
+      contents: write # allows publish.yml's manual attach job (skipped here)
+
+  release:
+    needs: [version, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # tag and release
+      issues: write # "released in" comments
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: release
         uses: cycjimmy/semantic-release-action@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.EU1400_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check version
+        if: steps.release.outputs.new_release_version != needs.version.outputs.version
+        run: |
+          echo "released '${{ steps.release.outputs.new_release_version }}', built '${{ needs.version.outputs.version }}'"
+          exit 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: executables-*
+          merge-multiple: true
+          path: assets
+
+      - name: Attach executables
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ needs.version.outputs.version }}" assets/* --repo "${{ github.repository }}"
