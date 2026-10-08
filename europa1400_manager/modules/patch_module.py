@@ -3,7 +3,7 @@ import typer
 from europa1400_manager.config import Config
 from europa1400_manager.const import PatchType
 from europa1400_manager.database import Database
-from europa1400_manager.models import GamePatch, GamePatchTable
+from europa1400_manager.models import GameE1400PatchTable, GamePatch, GamePatchTable
 from europa1400_manager.modules.base_module import BaseModule
 from europa1400_manager.patches.archive_patch import ArchivePatch
 from europa1400_manager.patches.base_patch import BasePatch
@@ -28,7 +28,9 @@ class PatchModule(BaseModule):
     def __init__(self, config: Config, database: Database) -> None:
         super().__init__(config, database)
 
-        self.game_patches = database.get_table_elements(GamePatchTable, GamePatch)
+        self.game_patches = database.get_table_elements(
+            GamePatchTable, GamePatch
+        ) + database.get_table_elements(GameE1400PatchTable, GamePatch)
 
         self.patches = [
             self.PATCH_TYPE_TO_CLASS[game_patch.type](config, game_patch)

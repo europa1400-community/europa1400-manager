@@ -173,4 +173,7 @@ class E1400PatchModulePatch(BasePatch):
         await self.execute_file_operations()
 
     async def uninstall(self) -> None:
-        shutil.rmtree(self.module_path, ignore_errors=True)
+        module_path = self.module_path
+        shutil.rmtree(module_path, ignore_errors=True)
+        if module_path.parent.exists() and not any(module_path.parent.iterdir()):
+            module_path.parent.rmdir()

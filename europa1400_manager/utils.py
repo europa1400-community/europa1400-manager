@@ -7,6 +7,7 @@ from typing import Any, TypeVar, cast
 import aiohttp
 import typer
 import yaml
+from dataclass_wizard import fromdict
 from dotenv import load_dotenv
 from yarl import URL
 
@@ -145,12 +146,30 @@ class DatabaseUtils:
             async with session.get(str(url), headers=headers) as response:
                 response.raise_for_status()
                 text = await response.text()
-                table = table_type.from_yaml(text)
-                if not isinstance(table, table_type):
-                    raise TypeError(
-                        f"Expected instance of {table_type.__name__}, got {type(table).__name__}"
+                return DatabaseUtils.parse_table(table_type, text)
+
+    @staticmethod
+    def parse_table(table_type: type[TTable], text: str) -> TTable:
+        """Parse a table; elements this version cannot read (e.g. newer patch types) are skipped, not the whole table."""
+        try:
+            table = table_type.from_yaml(text)
+        except Exception:
+            data = cast(dict[str, Any], yaml.safe_load(text))
+            elements = []
+            for element in data.get("elements") or []:
+                try:
+                    fromdict(table_type, {**data, "elements": [element]})
+                    elements.append(element)
+                except Exception as e:
+                    print(
+                        f"Warning: skipping {table_type.FILE_NAME} element {element.get('id') if isinstance(element, dict) else element!r}: {e}"
                     )
-                return table
+            table = fromdict(table_type, {**data, "elements": elements})
+        if not isinstance(table, table_type):
+            raise TypeError(
+                f"Expected instance of {table_type.__name__}, got {type(table).__name__}"
+            )
+        return table
 
     @staticmethod
     async def read_yaml_file(url: URL) -> dict[str, Any]:

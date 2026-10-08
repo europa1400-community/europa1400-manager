@@ -149,6 +149,17 @@ class GamePatchTable(DatabaseTable):
 
 
 @dataclass
+@table("e1400patch.yml")
+class GameE1400PatchTable(DatabaseTable):
+    """Patches of europa1400-patches (loader and patch modules).
+
+    A table of its own: managers up to 1.1 cannot parse the new patch types and would drop the whole patch.yml.
+    """
+
+    elements: list[GamePatch]
+
+
+@dataclass
 @table("metadata_to_patch.yml")
 class GameMetadataToPatchTable(DatabaseTable):
     elements: list[GameMetadataToPatch]

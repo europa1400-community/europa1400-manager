@@ -7,6 +7,7 @@ from europa1400_manager.models import (
     DatabaseTable,
     GameDistributionTable,
     GameDrmTable,
+    GameE1400PatchTable,
     GameEditionTable,
     GameExecutableTable,
     GameExecutableToMetadataTable,
@@ -51,6 +52,7 @@ class Database:
             GameExecutableTable,
             GameExecutableToMetadataTable,
             GamePatchTable,
+            GameE1400PatchTable,
         ]
 
         # Fetch all tables
