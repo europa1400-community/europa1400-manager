@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from europa1400_manager.core import game_settings, ini
+from europa1400_manager.core import game_settings, ini, monitor
 from europa1400_manager.core.errors import ManagerError
 from europa1400_manager.core.game_settings import GameSetting
 from europa1400_manager.gui.state import AppState
@@ -40,6 +40,8 @@ class GameSettingsPage(Page):
         self.controls: dict[tuple[str, str], tuple[GameSetting, QWidget]] = {}
         self.loaded: dict[tuple[str, str], str | None] = {}
         self.table: QTableWidget | None = None
+        self.monitor_spin: QSpinBox | None = None
+        self.monitor_loaded = 1
         self.raw_loaded: dict[tuple[str, str], str] = {}
         state.game_changed.connect(self.refresh)
         state.patches_changed.connect(self.refresh)
@@ -48,6 +50,7 @@ class GameSettingsPage(Page):
         clear(self.content)
         clear(self.notices)
         self.controls.clear()
+        self.monitor_spin = None
         game = self.state.game
         if game is None:
             self.notices.addWidget(Banner(tr("ui.no_game_selected"), "info"))
@@ -70,6 +73,7 @@ class GameSettingsPage(Page):
             groups[setting.group].addRow(tr(setting.label), control)
             self.controls[(setting.section, setting.key)] = (setting, control)
 
+        self._monitor_group(game.path)
         self._raw_table(game.game_ini)
 
         buttons = QHBoxLayout()
@@ -88,6 +92,22 @@ class GameSettingsPage(Page):
         self.content.addLayout(buttons)
         if (game.path / BACKUP_NAME).exists():
             self.content.addWidget(muted(tr("ui.game_ini_backup", name=BACKUP_NAME)))
+
+    def _monitor_group(self, folder: Path) -> None:
+        if not monitor.installed(folder):
+            return
+        self.monitor_loaded = monitor.read(folder)
+        spin = QSpinBox()
+        spin.setRange(0, monitor.MAXIMUM)
+        spin.setValue(self.monitor_loaded)
+        spin.setSpecialValueText(tr("settings.monitor_off"))
+        self.monitor_spin = spin
+        box = QGroupBox(tr("settings.group.display") + " / Monitorfix")
+        form = QFormLayout(box)
+        form.setHorizontalSpacing(24)
+        form.addRow(tr("settings.monitor"), spin)
+        form.addRow(muted(tr("settings.monitor_hint", log=monitor.LOG_NAME)))
+        self.content.addWidget(box)
 
     def _control(self, setting: GameSetting, value: str | None) -> QWidget:
         if setting.kind == "bool":
@@ -190,13 +210,19 @@ class GameSettingsPage(Page):
                     key,
                 ) not in {(s.lower(), k.lower()) for s, k in changes}:
                     changes[(section, key)] = value
-        if not changes:
+        new_monitor = self.monitor_spin.value() if self.monitor_spin else None
+        monitor_changed = new_monitor is not None and new_monitor != self.monitor_loaded
+        if not changes and not monitor_changed:
             QMessageBox.information(self, tr("ui.save"), tr("ui.nothing_changed"))
             return
         try:
             game.ensure_not_running()
-            game.backup_game_ini()
-            ini.set_values(game.game_ini, changes)
+            if changes:
+                game.backup_game_ini()
+                ini.set_values(game.game_ini, changes)
+            if monitor_changed and new_monitor is not None:
+                monitor.write(game.path, new_monitor)
+                changes[("monitorfix", "monitor")] = str(new_monitor)
         except (ManagerError, OSError) as error:
             QMessageBox.warning(self, tr("ui.error"), str(error))
             return

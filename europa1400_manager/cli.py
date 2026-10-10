@@ -19,6 +19,7 @@ from europa1400_manager.core import (
     game_settings,
     ini,
     logs,
+    monitor,
     recommendations,
     savegames,
     updates,
@@ -313,6 +314,22 @@ def ini_show(game: GameOption = None) -> None:
             typer.echo(
                 f"[{setting.section}] {setting.key} = {values[(setting.section, setting.key)]}"
             )
+
+    run(action)
+
+
+@app.command("monitor")
+def monitor_command(number: int | None = None, game: GameOption = None) -> None:
+    """Show or set the monitor the game starts on (needs the Monitorfix patch; 0 = off, 1 = main display)."""
+
+    def action() -> None:
+        folder = Context(game).game().path
+        if not monitor.installed(folder):
+            raise ManagerError("Monitorfix is not installed (patch id: monitorfix).")
+        if number is None:
+            typer.echo(monitor.read(folder))
+        else:
+            monitor.write(folder, number)
 
     run(action)
 

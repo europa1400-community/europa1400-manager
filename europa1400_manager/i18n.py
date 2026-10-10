@@ -115,6 +115,15 @@ TEXTS: dict[str, dict[str, str]] = {
     "settings.group.sound": {"en": "Sound", "de": "Ton"},
     "settings.group.gameplay": {"en": "Gameplay", "de": "Spiel"},
     "settings.group.network": {"en": "Multiplayer", "de": "Mehrspieler"},
+    "settings.monitor": {"en": "Monitor (Monitorfix)", "de": "Bildschirm (Monitorfix)"},
+    "settings.monitor_off": {
+        "en": "0 = off (all monitors)",
+        "de": "0 = aus (alle Bildschirme)",
+    },
+    "settings.monitor_hint": {
+        "en": "1 = main display, 2 = second monitor, ... After a game start {log} in the game folder lists the monitors and their numbers.",
+        "de": "1 = Hauptbildschirm, 2 = zweiter Bildschirm, ... Nach einem Spielstart listet {log} im Spielordner die Bildschirme und ihre Nummern.",
+    },
     "settings.display_mode": {"en": "Display mode", "de": "Bildmodus"},
     "settings.fullscreen": {"en": "Fullscreen", "de": "Vollbild"},
     "settings.window": {"en": "Window", "de": "Fenster"},
