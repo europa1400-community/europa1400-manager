@@ -102,7 +102,7 @@ class GameSettingsPage(Page):
         spin.setValue(self.monitor_loaded)
         spin.setSpecialValueText(tr("settings.monitor_off"))
         self.monitor_spin = spin
-        box = QGroupBox(tr("settings.group.display") + " / Monitorfix")
+        box = QGroupBox(tr("settings.group.display") + " / Gfxfix")
         form = QFormLayout(box)
         form.setHorizontalSpacing(24)
         form.addRow(tr("settings.monitor"), spin)
@@ -222,7 +222,7 @@ class GameSettingsPage(Page):
                 ini.set_values(game.game_ini, changes)
             if monitor_changed and new_monitor is not None:
                 monitor.write(game.path, new_monitor)
-                changes[("monitorfix", "monitor")] = str(new_monitor)
+                changes[("gfxfix", "monitor")] = str(new_monitor)
         except (ManagerError, OSError) as error:
             QMessageBox.warning(self, tr("ui.error"), str(error))
             return

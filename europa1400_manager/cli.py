@@ -320,12 +320,12 @@ def ini_show(game: GameOption = None) -> None:
 
 @app.command("monitor")
 def monitor_command(number: int | None = None, game: GameOption = None) -> None:
-    """Show or set the monitor the game starts on (needs the Monitorfix patch; 0 = off, 1 = main display)."""
+    """Show or set the monitor the game starts on (needs the Gfxfix patch; 0 = off, 1 = main display)."""
 
     def action() -> None:
         folder = Context(game).game().path
         if not monitor.installed(folder):
-            raise ManagerError("Monitorfix is not installed (patch id: monitorfix).")
+            raise ManagerError("Gfxfix is not installed (patch id: gfxfix).")
         if number is None:
             typer.echo(monitor.read(folder))
         else:

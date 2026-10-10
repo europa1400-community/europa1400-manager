@@ -115,7 +115,7 @@ TEXTS: dict[str, dict[str, str]] = {
     "settings.group.sound": {"en": "Sound", "de": "Ton"},
     "settings.group.gameplay": {"en": "Gameplay", "de": "Spiel"},
     "settings.group.network": {"en": "Multiplayer", "de": "Mehrspieler"},
-    "settings.monitor": {"en": "Monitor (Monitorfix)", "de": "Bildschirm (Monitorfix)"},
+    "settings.monitor": {"en": "Monitor (Gfxfix)", "de": "Bildschirm (Gfxfix)"},
     "settings.monitor_off": {
         "en": "0 = off (all monitors)",
         "de": "0 = aus (alle Bildschirme)",
